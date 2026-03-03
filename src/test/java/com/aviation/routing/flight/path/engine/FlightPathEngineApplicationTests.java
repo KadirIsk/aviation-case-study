@@ -1,4 +1,4 @@
-package com.aviation.routing.flight_path_engine;
+package com.aviation.routing.flight.path.engine;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
