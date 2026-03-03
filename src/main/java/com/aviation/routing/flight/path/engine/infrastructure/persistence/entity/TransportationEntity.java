@@ -25,22 +25,28 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Transportation {
+public class TransportationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transportations_seq_gen")
     @SequenceGenerator(name = "transportations_seq_gen", sequenceName = "transportations_seq", allocationSize = 1)
     private Long id;
 
+    @Column(name = "origin_location_id", nullable = false)
+    private Long originLocationEntityId;
+
     @NotNull(message = "Origin location is required")
     @OneToOne
-    @JoinColumn(name = "origin_location_id", nullable = false)
-    private Location originLocation;
+    @JoinColumn(name = "origin_location_id", nullable = false, insertable = false, updatable = false)
+    private LocationEntity originLocationEntity;
+
+    @Column(name = "destination_location_id", nullable = false)
+    private Long destinationLocationEntityId;
 
     @NotNull(message = "Destination location is required")
     @OneToOne
-    @JoinColumn(name = "destination_location_id", nullable = false)
-    private Location destinationLocation;
+    @JoinColumn(name = "destination_location_id", nullable = false, insertable = false, updatable = false)
+    private LocationEntity destinationLocationEntity;
 
     @NotBlank(message = "Transportation type cannot be blank")
     @Size(max = 50, message = "Transportation type must be less than 50 characters")
