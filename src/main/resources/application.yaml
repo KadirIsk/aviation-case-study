@@ -32,6 +32,8 @@ spring:
       leak-detection-threshold: 60000 # Detect connection leaks after 60 seconds
       register-mbeans: true # Enable JMX monitoring
       connection-init-sql: SET client_encoding TO 'UTF8'
+  liquibase:
+    change-log: classpath:changelog/db.changelog-master.xml
 
   data:
     redis:

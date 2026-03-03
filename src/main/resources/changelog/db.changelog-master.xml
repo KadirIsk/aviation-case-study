@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd">
+
+	<changeSet id="20260304120000-1" author="kadir">
+		<createSequence sequenceName="locations_seq" startValue="1" incrementBy="1"/>
+	</changeSet>
+
+	<changeSet id="20260304120030-1" author="kadir">
+		<createSequence sequenceName="transportations_seq" startValue="1" incrementBy="1"/>
+	</changeSet>
+
+	<changeSet id="20260304120100-1" author="kadir">
+		<createTable tableName="locations">
+			<column name="id" type="BIGINT" defaultValueSequenceNext="locations_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="country" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="city" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="location_code" type="VARCHAR(10)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="20260304120200-1" author="kadir">
+		<createTable tableName="transportations">
+			<column name="id" type="BIGINT" defaultValueSequenceNext="transportations_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="origin_location_id" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="destination_location_id" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="transportation_type" type="VARCHAR(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="operating_days" type="VARCHAR(20)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint
+			baseTableName="transportations" baseColumnNames="origin_location_id"
+			referencedTableName="locations" referencedColumnNames="id"
+			constraintName="fk_transportations_origin"/>
+
+		<addForeignKeyConstraint
+			baseTableName="transportations" baseColumnNames="destination_location_id"
+			referencedTableName="locations" referencedColumnNames="id"
+			constraintName="fk_transportations_destination"/>
+	</changeSet>
+</databaseChangeLog>
