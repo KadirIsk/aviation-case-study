@@ -6,7 +6,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: validate  # Database changes ONLY through Flyway migrations
+      ddl-auto: validate  # Database changes ONLY through liquibase migrations
     properties:
       hibernate:
         envers:
