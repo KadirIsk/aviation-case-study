@@ -3,6 +3,7 @@ package com.aviation.routing.flight.path.engine.infrastructure.rest;
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,7 @@ public class LocationController {
     }
 
     // todo: page'i komple donme
+    @Operation(summary = "Get filtered locations", description = "Returns a paginated list of locations based on filters")
     @GetMapping
     public Page<Location> getAll(LocationRequest request, Pageable pageable) {
         return locationService.getLocations(request, pageable);

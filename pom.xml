@@ -20,6 +20,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<redisson-spring-boot-starter.version>3.27.2</redisson-spring-boot-starter.version>
 		<liquibase-core.version>4.23.2</liquibase-core.version>
+		<springdoc-ui.version>2.5.0</springdoc-ui.version>
 	</properties>
 
 	<dependencies>
@@ -85,6 +86,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc-ui.version}</version>
 		</dependency>
 
 	</dependencies>

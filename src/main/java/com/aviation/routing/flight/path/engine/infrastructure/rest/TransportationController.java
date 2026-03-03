@@ -3,6 +3,7 @@ package com.aviation.routing.flight.path.engine.infrastructure.rest;
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,7 @@ public class TransportationController {
     }
 
     // todo: page'i komple donme
+    @Operation(summary = "Get filtered transportations", description = "Returns a paginated list of transportations based on filters")
     @GetMapping
     public Page<Transportation> getAll(TransportationRequest request, Pageable pageable) {
         return transportationService.getTransportations(request, pageable);
