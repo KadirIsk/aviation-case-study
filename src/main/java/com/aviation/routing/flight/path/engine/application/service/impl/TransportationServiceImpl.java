@@ -1,12 +1,12 @@
 package com.aviation.routing.flight.path.engine.application.service.impl;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
-import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
-import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,17 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TransportationServiceImpl implements TransportationService {
     private final TransportationRepository transportationRepository;
-    private final LocationService locationService;
 
     @Transactional
     @Override
     public Transportation createTransportation(TransportationRequest request) {
-        Location origin = locationService.getLocation(request.originLocationId());
-        Location destination = locationService.getLocation(request.destinationLocationId());
-
         Transportation transportation = Transportation.builder()
-            .originLocationId(origin.getId())
-            .destinationLocationId(destination.getId())
+            .originLocationId(request.originLocationId())
+            .destinationLocationId(request.destinationLocationId())
             .transportationType(request.transportationType())
             .operatingDays(request.operatingDays())
             .build();
@@ -42,5 +38,24 @@ public class TransportationServiceImpl implements TransportationService {
     @Override
     public void deleteTransportation(Long id) {
         transportationRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public Transportation updateTransportation(Long id, TransportationRequest request) {
+        Transportation existing = getTransportation(id);
+
+        existing.setOriginLocationId(request.originLocationId());
+        existing.setDestinationLocationId(request.destinationLocationId());
+        existing.setTransportationType(request.transportationType());
+        existing.setOperatingDays(request.operatingDays());
+
+        return transportationRepository.save(existing);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Transportation> getTransportations(TransportationRequest filter, Pageable pageable) {
+        return transportationRepository.findAll(filter, pageable);
     }
 }

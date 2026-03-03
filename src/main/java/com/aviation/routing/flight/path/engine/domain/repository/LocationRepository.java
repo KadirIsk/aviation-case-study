@@ -1,13 +1,15 @@
 package com.aviation.routing.flight.path.engine.domain.repository;
 
-import java.util.List;
 import java.util.Optional;
 
+import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface LocationRepository {
     Location save(Location location);
     Optional<Location> findById(Long id);
-    List<Location> findAll();
+    Page<Location> findAll(LocationRequest filter, Pageable pageable);
     void deleteById(Long id);
 }

@@ -3,7 +3,7 @@ package com.aviation.routing.flight.path.engine.application.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -11,8 +11,6 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
-import com.aviation.routing.flight.path.engine.application.service.LocationService;
-import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepository;
 import org.junit.jupiter.api.Test;
@@ -28,23 +26,17 @@ class TransportationServiceImplTest {
     @Mock
     private TransportationRepository transportationRepository;
 
-    @Mock
-    private LocationService locationService;
-
     @InjectMocks
     private TransportationServiceImpl service;
 
     @Test
-    void createTransportation_fetchesLocations_buildsTransportation_andSaves() {
+    void createTransportation_buildsTransportation_fromRequest_andSaves() {
         TransportationRequest request = TransportationRequest.builder()
             .originLocationId(10L)
             .destinationLocationId(20L)
             .transportationType("FLIGHT")
             .operatingDays("DAILY")
             .build();
-
-        when(locationService.getLocation(10L)).thenReturn(Location.builder().id(10L).build());
-        when(locationService.getLocation(20L)).thenReturn(Location.builder().id(20L).build());
 
         Transportation savedFromRepo = Transportation.builder()
             .id(99L)
@@ -57,9 +49,6 @@ class TransportationServiceImplTest {
         when(transportationRepository.save(any(Transportation.class))).thenReturn(savedFromRepo);
 
         Transportation result = service.createTransportation(request);
-
-        verify(locationService).getLocation(10L);
-        verify(locationService).getLocation(20L);
 
         ArgumentCaptor<Transportation> captor = ArgumentCaptor.forClass(Transportation.class);
         verify(transportationRepository).save(captor.capture());

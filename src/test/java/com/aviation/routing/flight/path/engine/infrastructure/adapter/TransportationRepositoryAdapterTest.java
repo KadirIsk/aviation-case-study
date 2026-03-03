@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
+import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.JpaTransportationRepository;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
@@ -21,6 +22,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 @ExtendWith(MockitoExtension.class)
 class TransportationRepositoryAdapterTest {
@@ -96,21 +102,40 @@ class TransportationRepositoryAdapterTest {
 
     @Test
     void findAll_mapsAllEntitiesToDomain() {
-        when(jpaTransportationRepository.findAll()).thenReturn(List.of(
+        TransportationRequest filter = TransportationRequest.builder().build();
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<TransportationEntity> entities = List.of(
             TransportationEntity.builder().id(1L).originLocationEntityId(10L).destinationLocationEntityId(11L)
                 .transportationType("FLIGHT").operatingDays("DAILY").build(),
             TransportationEntity.builder().id(2L).originLocationEntityId(12L).destinationLocationEntityId(13L)
                 .transportationType("BUS").operatingDays("WEEKEND").build()
-        ));
+        );
 
-        List<Transportation> all = adapter.findAll();
+        when(jpaTransportationRepository.findAll(any(Specification.class), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(entities, pageable, entities.size()));
 
-        assertEquals(2, all.size());
-        assertEquals(1L, all.get(0).getId());
-        assertEquals("FLIGHT", all.get(0).getTransportationType());
-        assertEquals(2L, all.get(1).getId());
-        assertEquals("BUS", all.get(1).getTransportationType());
-        verify(jpaTransportationRepository).findAll();
+        Page<Transportation> page = adapter.findAll(filter, pageable);
+
+        assertNotNull(page);
+        assertEquals(2, page.getTotalElements());
+        assertEquals(2, page.getContent().size());
+
+        Transportation first = page.getContent().getFirst();
+        assertEquals(1L, first.getId());
+        assertEquals(10L, first.getOriginLocationId());
+        assertEquals(11L, first.getDestinationLocationId());
+        assertEquals("FLIGHT", first.getTransportationType());
+        assertEquals("DAILY", first.getOperatingDays());
+
+        Transportation second = page.getContent().get(1);
+        assertEquals(2L, second.getId());
+        assertEquals(12L, second.getOriginLocationId());
+        assertEquals(13L, second.getDestinationLocationId());
+        assertEquals("BUS", second.getTransportationType());
+        assertEquals("WEEKEND", second.getOperatingDays());
+
+        verify(jpaTransportationRepository).findAll(any(Specification.class), any(Pageable.class));
     }
 
     @Test

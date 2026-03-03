@@ -14,7 +14,9 @@ import lombok.Setter;
 public class Transportation {
     private Long id;
     private Long originLocationId;
+    private Location originLocation;
     private Long destinationLocationId;
+    private Location destinationLocation;
     private String transportationType;
     private String operatingDays;
 }

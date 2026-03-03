@@ -5,6 +5,8 @@ import com.aviation.routing.flight.path.engine.application.service.LocationServi
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +36,26 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    @Transactional
+    public Location updateLocation(Long id, LocationRequest request) {
+        Location existing = getLocation(id);
+
+        existing.setName(request.name());
+        existing.setCountry(request.country());
+        existing.setCity(request.city());
+        existing.setLocationCode(request.locationCode());
+
+        return locationRepository.save(existing);
+    }
+
+    @Override
     public void deleteLocation(Long id) {
         locationRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Location> getLocations(LocationRequest filter, Pageable pageable) {
+        return locationRepository.findAll(filter, pageable);
     }
 }

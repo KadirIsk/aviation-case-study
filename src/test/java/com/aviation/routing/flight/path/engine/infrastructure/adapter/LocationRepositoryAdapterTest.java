@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
+import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.JpaLocationRepository;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
@@ -21,6 +22,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 @ExtendWith(MockitoExtension.class)
 class LocationRepositoryAdapterTest {
@@ -105,19 +111,32 @@ class LocationRepositoryAdapterTest {
 
     @Test
     void findAll_mapsAllEntitiesToDomain() {
-        when(jpaLocationRepository.findAll()).thenReturn(List.of(
+        LocationRequest filter = LocationRequest.builder().build();
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<LocationEntity> entities = List.of(
             LocationEntity.builder().id(1L).name("A").country("TR").city("X").locationCode("AAA").build(),
             LocationEntity.builder().id(2L).name("B").country("TR").city("Y").locationCode("BBB").build()
-        ));
+        );
 
-        List<Location> all = adapter.findAll();
+        when(jpaLocationRepository.findAll(any(Specification.class), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(entities, pageable, entities.size()));
 
-        assertEquals(2, all.size());
-        assertEquals(1L, all.get(0).getId());
-        assertEquals("AAA", all.get(0).getLocationCode());
-        assertEquals(2L, all.get(1).getId());
-        assertEquals("BBB", all.get(1).getLocationCode());
-        verify(jpaLocationRepository).findAll();
+        Page<Location> page = adapter.findAll(filter, pageable);
+
+        assertNotNull(page);
+        assertEquals(2, page.getTotalElements());
+        assertEquals(2, page.getContent().size());
+
+        Location first = page.getContent().get(0);
+        assertEquals(1L, first.getId());
+        assertEquals("AAA", first.getLocationCode());
+
+        Location second = page.getContent().get(1);
+        assertEquals(2L, second.getId());
+        assertEquals("BBB", second.getLocationCode());
+
+        verify(jpaLocationRepository).findAll(any(Specification.class), any(Pageable.class));
     }
 
     @Test
