@@ -2,3 +2,57 @@ server.port: 8899
 
 spring:
   application.name: flight-path-engine
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate  # Database changes ONLY through Flyway migrations
+    properties:
+      hibernate:
+        envers:
+          revision-field-name: REV
+          revision-type-field-name: REVTYPE
+          store-data-at-delete: true
+          default-schema: public
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/aviation_db}
+    username: ${DATABASE_USERNAME:user}
+    password: ${DATABASE_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 5000
+      maximum-pool-size: ${HIKARI_MAX_POOL_SIZE:20}
+      minimum-idle: ${HIKARI_MIN_IDLE:5}
+      idle-timeout: 300000 # 5 minutes
+      max-lifetime: 1800000 # 30 minutes (less than database connection timeout)
+      connection-test-query: SELECT 1
+      pool-name: HikariPool
+      initialization-fail-timeout: 1
+      leak-detection-threshold: 60000 # Detect connection leaks after 60 seconds
+      register-mbeans: true # Enable JMX monitoring
+      connection-init-sql: SET client_encoding TO 'UTF8'
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      #      password: ${REDIS_PASSWORD:}
+      #      username: ${REDIS_USERNAME:}
+      timeout: 2000ms
+
+  redisson:
+    config: |
+      singleServerConfig:
+        address: "redis://${spring.data.redis.host}:${spring.data.redis.port}"
+        password: "${spring.data.redis.password}"
+        username: "${spring.data.redis.username}"
+        connectionMinimumIdleSize: 5
+        connectionPoolSize: 20
+        connectTimeout: 3000
+        timeout: 2000
+        retryAttempts: 3
+        retryInterval: 1500
+      lockWatchdogTimeout: 30000 
+      threads: 4
+      nettyThreads: 8>
