@@ -2,11 +2,12 @@ package com.aviation.routing.flight.path.engine.infrastructure.persistence.entit
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -36,16 +37,16 @@ public class TransportationEntity {
     private Long originLocationEntityId;
 
     @NotNull(message = "Origin location is required")
-    @OneToOne
-    @JoinColumn(name = "origin_location_id", nullable = false, insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "origin_location_id", insertable = false, updatable = false)
     private LocationEntity originLocationEntity;
 
     @Column(name = "destination_location_id", nullable = false)
     private Long destinationLocationEntityId;
 
     @NotNull(message = "Destination location is required")
-    @OneToOne
-    @JoinColumn(name = "destination_location_id", nullable = false, insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destination_location_id", insertable = false, updatable = false)
     private LocationEntity destinationLocationEntity;
 
     @NotBlank(message = "Transportation type cannot be blank")
