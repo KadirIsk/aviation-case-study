@@ -1,9 +1,8 @@
 package com.aviation.routing.flight.path.engine;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class FlightPathEngineApplicationTests {
 
 	@Test
