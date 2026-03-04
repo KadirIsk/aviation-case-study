@@ -1,14 +1,16 @@
-package com.aviation.routing.flight.path.engine.infrastructure.rest;
+package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,16 +28,29 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    // todo: tum api uclari tek tip bir response donmeli!!!
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Location create(@Valid @RequestBody LocationRequest request) {
-        return locationService.createLocation(request);
+    public ResponseEntity<ApiResponse<Location>> create(@Valid @RequestBody LocationRequest request) {
+        Location location = locationService.createLocation(request);
+
+        ApiResponse<Location> apiResponse = ApiResponse.<Location>builder()
+            .message("Location created successfully")
+            .data(location)
+            .build();
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/{id}")
-    public Location getById(@PathVariable Long id) {
-        return locationService.getLocation(id);
+    public ResponseEntity<ApiResponse<Location>> getById(@PathVariable Long id) {
+        Location location = locationService.getLocation(id);
+
+        ApiResponse<Location> apiResponse = ApiResponse.<Location>builder()
+            .message("Location retrieved successfully")
+            .data(location)
+            .build();
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     // todo: page'i komple donme
@@ -46,13 +61,20 @@ public class LocationController {
     }
 
     @PutMapping("/{id}")
-    public Location update(@PathVariable Long id, @Valid @RequestBody LocationRequest request) {
-        return locationService.updateLocation(id, request);
+    public ResponseEntity<ApiResponse<Location>> update(@PathVariable Long id, @Valid @RequestBody LocationRequest request) {
+        Location location = locationService.updateLocation(id, request);
+
+        ApiResponse<Location> apiResponse = ApiResponse.<Location>builder()
+            .message("Location updated successfully")
+            .data(location)
+            .build();
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         locationService.deleteLocation(id);
+        return ResponseEntity.noContent().build();
     }
 }

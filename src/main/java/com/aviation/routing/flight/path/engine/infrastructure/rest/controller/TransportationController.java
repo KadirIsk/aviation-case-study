@@ -1,14 +1,16 @@
-package com.aviation.routing.flight.path.engine.infrastructure.rest;
+package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,16 +28,29 @@ public class TransportationController {
 
     private final TransportationService transportationService;
 
-    // todo: tum api uclari tek tip bir response donmeli!!!
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Transportation create(@Valid @RequestBody TransportationRequest request) {
-        return transportationService.createTransportation(request);
+    public ResponseEntity<ApiResponse<Transportation>> create(@Valid @RequestBody TransportationRequest request) {
+        Transportation transportation = transportationService.createTransportation(request);
+
+        ApiResponse<Transportation> apiResponse = ApiResponse.<Transportation>builder()
+            .message("Transportation created successfully")
+            .data(transportation)
+            .build();
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/{id}")
-    public Transportation getById(@PathVariable Long id) {
-        return transportationService.getTransportation(id);
+    public ResponseEntity<ApiResponse<Transportation>> getById(@PathVariable Long id) {
+        Transportation transportation = transportationService.getTransportation(id);
+
+        ApiResponse<Transportation> apiResponse = ApiResponse.<Transportation>builder()
+            .message("Transportation retrieved successfully")
+            .data(transportation)
+            .build();
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     // todo: page'i komple donme
@@ -46,13 +61,20 @@ public class TransportationController {
     }
 
     @PutMapping("/{id}")
-    public Transportation update(@PathVariable Long id, @Valid @RequestBody TransportationRequest request) {
-        return transportationService.updateTransportation(id, request);
+    public ResponseEntity<ApiResponse<Transportation>> update(@PathVariable Long id, @Valid @RequestBody TransportationRequest request) {
+        Transportation transportation = transportationService.updateTransportation(id, request);
+
+        ApiResponse<Transportation> apiResponse = ApiResponse.<Transportation>builder()
+            .message("Transportation updated successfully")
+            .data(transportation)
+            .build();
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         transportationService.deleteTransportation(id);
+        return ResponseEntity.noContent().build();
     }
 }

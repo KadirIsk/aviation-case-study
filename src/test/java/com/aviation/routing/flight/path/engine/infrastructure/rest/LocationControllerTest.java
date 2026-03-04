@@ -17,16 +17,20 @@ import java.util.List;
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.controller.LocationController;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+@Import(GlobalExceptionHandler.class)
 @WebMvcTest(LocationController.class)
 class LocationControllerTest {
 
@@ -37,7 +41,7 @@ class LocationControllerTest {
     private LocationService locationService;
 
     @Test
-    void create_returns201_andBody() throws Exception {
+    void create_returns200_andStandardResponseBody() throws Exception {
         Location saved = Location.builder()
             .id(1L)
             .name("Sabiha")
@@ -51,41 +55,46 @@ class LocationControllerTest {
         mockMvc.perform(post("/api/v1/locations")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
-                                {
-                                  "name": "Sabiha",
-                                  "country": "TR",
-                                  "city": "Istanbul",
-                                  "locationCode": "SAW"
-                                }
-                                """))
-            .andExpect(status().isCreated())
+                                         {
+                                           "name": "Sabiha",
+                                           "country": "TR",
+                                           "city": "Istanbul",
+                                           "locationCode": "SAW"
+                                         }
+                                         """))
+            .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.name").value("Sabiha"))
-            .andExpect(jsonPath("$.country").value("TR"))
-            .andExpect(jsonPath("$.city").value("Istanbul"))
-            .andExpect(jsonPath("$.locationCode").value("SAW"));
+            .andExpect(jsonPath("$.message").value("Location created successfully"))
+            .andExpect(jsonPath("$.data.id").value(1))
+            .andExpect(jsonPath("$.data.name").value("Sabiha"))
+            .andExpect(jsonPath("$.data.country").value("TR"))
+            .andExpect(jsonPath("$.data.city").value("Istanbul"))
+            .andExpect(jsonPath("$.data.locationCode").value("SAW"));
 
         verify(locationService).createLocation(any(LocationRequest.class));
     }
 
     @Test
-    void create_whenInvalid_returns400() throws Exception {
+    void create_whenInvalid_returns400_andStandardErrorResponse() throws Exception {
         mockMvc.perform(post("/api/v1/locations")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
-                                {
-                                  "name": "",
-                                  "country": "TR",
-                                  "city": "Istanbul",
-                                  "locationCode": "SAW"
-                                }
-                                """))
-            .andExpect(status().isBadRequest());
+                                         {
+                                           "name": "",
+                                           "country": "TR",
+                                           "city": "Istanbul",
+                                           "locationCode": "SAW"
+                                         }
+                                         """))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+            .andExpect(jsonPath("$.message").value("Validation failed"))
+            .andExpect(jsonPath("$.data").isArray());
     }
 
     @Test
-    void getById_returns200_andBody() throws Exception {
+    void getById_returns200_andStandardResponseBody() throws Exception {
         when(locationService.getLocation(5L)).thenReturn(
             Location.builder()
                 .id(5L)
@@ -98,10 +107,24 @@ class LocationControllerTest {
 
         mockMvc.perform(get("/api/v1/locations/{id}", 5L))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(5))
-            .andExpect(jsonPath("$.locationCode").value("IST"));
+            .andExpect(jsonPath("$.message").value("Location retrieved successfully"))
+            .andExpect(jsonPath("$.data.id").value(5))
+            .andExpect(jsonPath("$.data.locationCode").value("IST"));
 
         verify(locationService).getLocation(5L);
+    }
+
+    @Test
+    void getById_whenServiceThrowsRuntimeException_returns404_andStandardErrorResponse() throws Exception {
+        when(locationService.getLocation(404L)).thenThrow(new RuntimeException("Location not found"));
+
+        mockMvc.perform(get("/api/v1/locations/{id}", 404L))
+            .andExpect(status().isNotFound())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value("NOT_FOUND"))
+            .andExpect(jsonPath("$.message").value("Location not found"));
+
+        verify(locationService).getLocation(404L);
     }
 
     @Test
@@ -134,7 +157,7 @@ class LocationControllerTest {
     }
 
     @Test
-    void update_returns200_andBody() throws Exception {
+    void update_returns200_andStandardResponseBody() throws Exception {
         Location updated = Location.builder()
             .id(7L)
             .name("NewName")
@@ -148,16 +171,17 @@ class LocationControllerTest {
         mockMvc.perform(put("/api/v1/locations/{id}", 7L)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
-                                {
-                                  "name": "NewName",
-                                  "country": "TR",
-                                  "city": "Ankara",
-                                  "locationCode": "ESB"
-                                }
-                                """))
+                                         {
+                                           "name": "NewName",
+                                           "country": "TR",
+                                           "city": "Ankara",
+                                           "locationCode": "ESB"
+                                         }
+                                         """))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(7))
-            .andExpect(jsonPath("$.locationCode").value("ESB"));
+            .andExpect(jsonPath("$.message").value("Location updated successfully"))
+            .andExpect(jsonPath("$.data.id").value(7))
+            .andExpect(jsonPath("$.data.locationCode").value("ESB"));
 
         verify(locationService).updateLocation(eq(7L), any(LocationRequest.class));
     }
