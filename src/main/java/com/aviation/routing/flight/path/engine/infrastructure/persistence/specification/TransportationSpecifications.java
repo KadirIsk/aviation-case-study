@@ -29,7 +29,7 @@ public class TransportationSpecifications {
             if (filter.transportationType() != null && !filter.transportationType().isBlank()) {
                 predicates.add(cb.equal(root.get(TransportationEntity.Fields.transportationType), filter.transportationType()));
             }
-            if (filter.operatingDays() != null && !filter.operatingDays().isBlank()) {
+            if (filter.operatingDays() != null) {   // todo: bu kismi duzeltecegiz!!!
                 predicates.add(cb.like(root.get(TransportationEntity.Fields.operatingDays), "%" + filter.operatingDays() + "%"));
             }
 

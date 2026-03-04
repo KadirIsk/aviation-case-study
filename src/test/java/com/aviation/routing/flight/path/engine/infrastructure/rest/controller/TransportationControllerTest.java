@@ -1,4 +1,4 @@
-package com.aviation.routing.flight.path.engine.infrastructure.rest;
+package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,7 +17,6 @@ import java.util.List;
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
-import com.aviation.routing.flight.path.engine.infrastructure.rest.controller.TransportationController;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ class TransportationControllerTest {
             .originLocationId(10L)
             .destinationLocationId(20L)
             .transportationType("FLIGHT")
-            .operatingDays("DAILY")
+            .operatingDays((short) 1)
             .build();
 
         when(transportationService.createTransportation(any(TransportationRequest.class))).thenReturn(saved);
@@ -59,7 +58,7 @@ class TransportationControllerTest {
                                            "originLocationId": 10,
                                            "destinationLocationId": 20,
                                            "transportationType": "FLIGHT",
-                                           "operatingDays": "DAILY"
+                                           "operatingDays": 1
                                          }
                                          """))
             .andExpect(status().isOk())
@@ -69,7 +68,7 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.data.originLocationId").value(10))
             .andExpect(jsonPath("$.data.destinationLocationId").value(20))
             .andExpect(jsonPath("$.data.transportationType").value("FLIGHT"))
-            .andExpect(jsonPath("$.data.operatingDays").value("DAILY"));
+            .andExpect(jsonPath("$.data.operatingDays").value(1));
 
         verify(transportationService).createTransportation(any(TransportationRequest.class));
     }
@@ -83,7 +82,7 @@ class TransportationControllerTest {
                                            "originLocationId": null,
                                            "destinationLocationId": 20,
                                            "transportationType": "FLIGHT",
-                                           "operatingDays": "DAILY"
+                                           "operatingDays": 1
                                          }
                                          """))
             .andExpect(status().isBadRequest())
@@ -101,7 +100,7 @@ class TransportationControllerTest {
                 .originLocationId(1L)
                 .destinationLocationId(2L)
                 .transportationType("BUS")
-                .operatingDays("WEEKEND")
+                .operatingDays((short) 1)
                 .build()
         );
 
@@ -134,9 +133,9 @@ class TransportationControllerTest {
         Page<Transportation> page = new PageImpl<>(
             List.of(
                 Transportation.builder().id(1L).originLocationId(10L).destinationLocationId(11L)
-                    .transportationType("FLIGHT").operatingDays("DAILY").build(),
+                    .transportationType("FLIGHT").operatingDays((short) 1).build(),
                 Transportation.builder().id(2L).originLocationId(12L).destinationLocationId(13L)
-                    .transportationType("BUS").operatingDays("WEEKEND").build()
+                    .transportationType("BUS").operatingDays((short) 1).build()
             ),
             pageable,
             2
@@ -171,7 +170,7 @@ class TransportationControllerTest {
             .originLocationId(100L)
             .destinationLocationId(200L)
             .transportationType("TRAIN")
-            .operatingDays("MON-FRI")
+            .operatingDays((short) 1)
             .build();
 
         when(transportationService.updateTransportation(eq(8L), any(TransportationRequest.class))).thenReturn(updated);
@@ -183,13 +182,14 @@ class TransportationControllerTest {
                                            "originLocationId": 100,
                                            "destinationLocationId": 200,
                                            "transportationType": "TRAIN",
-                                           "operatingDays": "MON-FRI"
+                                           "operatingDays": 1
                                          }
                                          """))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.message").value("Transportation updated successfully"))
             .andExpect(jsonPath("$.data.id").value(8))
-            .andExpect(jsonPath("$.data.transportationType").value("TRAIN"));
+            .andExpect(jsonPath("$.data.transportationType").value("TRAIN"))
+            .andExpect(jsonPath("$.data.operatingDays").value(1));
 
         verify(transportationService).updateTransportation(eq(8L), any(TransportationRequest.class));
     }

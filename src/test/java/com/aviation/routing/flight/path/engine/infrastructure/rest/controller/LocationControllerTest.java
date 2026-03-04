@@ -1,4 +1,4 @@
-package com.aviation.routing.flight.path.engine.infrastructure.rest;
+package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,7 +17,6 @@ import java.util.List;
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
-import com.aviation.routing.flight.path.engine.infrastructure.rest.controller.LocationController;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

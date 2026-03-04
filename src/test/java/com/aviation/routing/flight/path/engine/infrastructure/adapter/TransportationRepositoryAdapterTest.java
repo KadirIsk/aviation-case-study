@@ -43,7 +43,7 @@ class TransportationRepositoryAdapterTest {
             .originLocationId(1L)
             .destinationLocationId(2L)
             .transportationType("FLIGHT")
-            .operatingDays("MON-FRI")
+            .operatingDays((short)1)
             .build();
 
         when(jpaTransportationRepository.save(any(TransportationEntity.class)))
@@ -69,14 +69,14 @@ class TransportationRepositoryAdapterTest {
         assertEquals(1L, passed.getOriginLocationEntityId());
         assertEquals(2L, passed.getDestinationLocationEntityId());
         assertEquals("FLIGHT", passed.getTransportationType());
-        assertEquals("MON-FRI", passed.getOperatingDays());
+        assertEquals((short)1, passed.getOperatingDays());
 
         assertNotNull(saved);
         assertEquals(200L, saved.getId());
         assertEquals(1L, saved.getOriginLocationId());
         assertEquals(2L, saved.getDestinationLocationId());
         assertEquals("FLIGHT", saved.getTransportationType());
-        assertEquals("MON-FRI", saved.getOperatingDays());
+        assertEquals((short)1, saved.getOperatingDays());
     }
 
     @Test
@@ -86,7 +86,7 @@ class TransportationRepositoryAdapterTest {
             .originLocationEntityId(3L)
             .destinationLocationEntityId(4L)
             .transportationType("BUS")
-            .operatingDays("DAILY")
+            .operatingDays((short)1)
             .build();
 
         when(jpaTransportationRepository.findById(9L)).thenReturn(Optional.of(entity));
@@ -107,9 +107,9 @@ class TransportationRepositoryAdapterTest {
 
         List<TransportationEntity> entities = List.of(
             TransportationEntity.builder().id(1L).originLocationEntityId(10L).destinationLocationEntityId(11L)
-                .transportationType("FLIGHT").operatingDays("DAILY").build(),
+                .transportationType("FLIGHT").operatingDays((short)1).build(),
             TransportationEntity.builder().id(2L).originLocationEntityId(12L).destinationLocationEntityId(13L)
-                .transportationType("BUS").operatingDays("WEEKEND").build()
+                .transportationType("BUS").operatingDays((short)1).build()
         );
 
         when(jpaTransportationRepository.findAll(any(Specification.class), any(Pageable.class)))
@@ -126,14 +126,14 @@ class TransportationRepositoryAdapterTest {
         assertEquals(10L, first.getOriginLocationId());
         assertEquals(11L, first.getDestinationLocationId());
         assertEquals("FLIGHT", first.getTransportationType());
-        assertEquals("DAILY", first.getOperatingDays());
+        assertEquals((short)1, first.getOperatingDays());
 
         Transportation second = page.getContent().get(1);
         assertEquals(2L, second.getId());
         assertEquals(12L, second.getOriginLocationId());
         assertEquals(13L, second.getDestinationLocationId());
         assertEquals("BUS", second.getTransportationType());
-        assertEquals("WEEKEND", second.getOperatingDays());
+        assertEquals((short)1, second.getOperatingDays());
 
         verify(jpaTransportationRepository).findAll(any(Specification.class), any(Pageable.class));
     }

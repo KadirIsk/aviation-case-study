@@ -56,8 +56,6 @@ public class TransportationEntity {
     @Column(name = "transportation_type", nullable = false, length = 50)
     private String transportationType;
 
-    @NotBlank(message = "Operating days cannot be blank")
-    @Size(max = 20, message = "Operating days description must be less than 20 characters")
     @Column(name = "operating_days", nullable = false, length = 20)
-    private String operatingDays;
+    private Short operatingDays;
 }

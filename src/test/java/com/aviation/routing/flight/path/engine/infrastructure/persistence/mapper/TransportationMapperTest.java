@@ -27,7 +27,7 @@ class TransportationMapperTest {
             .originLocationEntityId(1L)
             .destinationLocationEntityId(2L)
             .transportationType("FLIGHT")
-            .operatingDays("MON-FRI")
+            .operatingDays((short)1)
             .build();
 
         Transportation domain = TransportationMapper.toDomain(entity);
@@ -37,7 +37,7 @@ class TransportationMapperTest {
         assertEquals(1L, domain.getOriginLocationId());
         assertEquals(2L, domain.getDestinationLocationId());
         assertEquals("FLIGHT", domain.getTransportationType());
-        assertEquals("MON-FRI", domain.getOperatingDays());
+        assertEquals((short)1, domain.getOperatingDays());
     }
 
     @Test
@@ -47,7 +47,7 @@ class TransportationMapperTest {
             .originLocationId(3L)
             .destinationLocationId(4L)
             .transportationType("BUS")
-            .operatingDays("DAILY")
+            .operatingDays((short)1)
             .build();
 
         TransportationEntity entity = TransportationMapper.toEntity(domain);
@@ -57,6 +57,6 @@ class TransportationMapperTest {
         assertEquals(3L, entity.getOriginLocationEntityId());
         assertEquals(4L, entity.getDestinationLocationEntityId());
         assertEquals("BUS", entity.getTransportationType());
-        assertEquals("DAILY", entity.getOperatingDays());
+        assertEquals((short)1, entity.getOperatingDays());
     }
 }

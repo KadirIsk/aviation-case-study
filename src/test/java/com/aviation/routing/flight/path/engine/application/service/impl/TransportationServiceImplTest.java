@@ -35,7 +35,7 @@ class TransportationServiceImplTest {
             .originLocationId(10L)
             .destinationLocationId(20L)
             .transportationType("FLIGHT")
-            .operatingDays("DAILY")
+            .operatingDays((short)1)
             .build();
 
         Transportation savedFromRepo = Transportation.builder()
@@ -43,7 +43,7 @@ class TransportationServiceImplTest {
             .originLocationId(10L)
             .destinationLocationId(20L)
             .transportationType("FLIGHT")
-            .operatingDays("DAILY")
+            .operatingDays((short)1)
             .build();
 
         when(transportationRepository.save(any(Transportation.class))).thenReturn(savedFromRepo);
@@ -58,7 +58,7 @@ class TransportationServiceImplTest {
         assertEquals(10L, passed.getOriginLocationId());
         assertEquals(20L, passed.getDestinationLocationId());
         assertEquals("FLIGHT", passed.getTransportationType());
-        assertEquals("DAILY", passed.getOperatingDays());
+        assertEquals((short)1, passed.getOperatingDays());
 
         assertEquals(99L, result.getId());
     }

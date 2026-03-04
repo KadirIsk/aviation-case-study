@@ -15,5 +15,5 @@ public record TransportationRequest(
     @Schema(description = "Type of the transportation", example = "FLIGHT, BUS, SUBWAY, UBER")
     @NotBlank String transportationType,
     @Schema(description = "Operating days of the transportation", example = "Monday, Tuesday")
-    @NotBlank String operatingDays
+    Short operatingDays
 ) { }

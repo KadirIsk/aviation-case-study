@@ -20,5 +20,5 @@ public class Transportation {
     private Long destinationLocationId;
     private Location destinationLocation;
     private String transportationType;
-    private String operatingDays;
+    private Short operatingDays;
 }
