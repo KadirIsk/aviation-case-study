@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd">
+
+	<changeSet id="20260304120200-2" author="kadir">
+		<addColumn tableName="transportations">
+			<column name="operating_days_mask" type="SMALLINT" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+
+		<sql dbms="postgresql">
+			<![CDATA[
+        UPDATE transportations
+        SET operating_days_mask = (
+            SELECT COALESCE(SUM(1 << (val::int - 1)), 0)::SMALLINT
+            FROM unnest(string_to_array(operating_days, ',')) AS val
+            WHERE val ~ '^[1-7]$'
+        );
+        ]]>
+		</sql>
+
+		<dropColumn tableName="transportations" columnName="operating_days"/>
+		<renameColumn tableName="transportations"
+		              oldColumnName="operating_days_mask"
+		              newColumnName="operating_days"/>
+
+		<rollback>
+			<addColumn tableName="transportations">
+				<column name="operating_days_old" type="VARCHAR(20)"/>
+			</addColumn>
+
+			<sql dbms="postgresql">
+				<![CDATA[
+            UPDATE transportations
+            SET operating_days_old = (
+                SELECT string_agg(g.v::text, ',' ORDER BY g.v)
+                FROM generate_series(1, 7) AS g(v)
+                WHERE (operating_days & (1 << (g.v - 1))) > 0
+            );
+            ]]>
+			</sql>
+
+			<dropColumn tableName="transportations" columnName="operating_days"/>
+			<renameColumn tableName="transportations"
+			              oldColumnName="operating_days_old"
+			              newColumnName="operating_days"/>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>

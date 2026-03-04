@@ -62,4 +62,6 @@
 			referencedTableName="locations" referencedColumnNames="id"
 			constraintName="fk_transportations_destination"/>
 	</changeSet>
+
+	<include file="db.changelog-operation_day-bitmask.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
