@@ -1,4 +1,4 @@
-package com.aviation.routing.flight.path.engine.infrastructure.persistence;
+package com.aviation.routing.flight.path.engine.infrastructure.persistence.repository;
 
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

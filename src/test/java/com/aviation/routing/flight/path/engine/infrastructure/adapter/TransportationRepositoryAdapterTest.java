@@ -14,8 +14,8 @@ import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
-import com.aviation.routing.flight.path.engine.infrastructure.persistence.JpaTransportationRepository;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
+import com.aviation.routing.flight.path.engine.infrastructure.persistence.repository.JpaTransportationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

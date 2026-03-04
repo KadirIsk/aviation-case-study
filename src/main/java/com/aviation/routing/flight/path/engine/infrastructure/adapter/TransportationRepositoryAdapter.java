@@ -5,9 +5,9 @@ import java.util.Optional;
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepository;
-import com.aviation.routing.flight.path.engine.infrastructure.persistence.JpaTransportationRepository;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.mapper.TransportationMapper;
+import com.aviation.routing.flight.path.engine.infrastructure.persistence.repository.JpaTransportationRepository;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.specification.TransportationSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 public class TransportationRepositoryAdapter implements TransportationRepository {
     private final JpaTransportationRepository jpaRepository;
 
+    // todo: burada validasyon kurallari isletmeliyiz!!! ayni origin, destination ve type ile ikinci kayit atilmamali
+    //  kontrol yetmez, bir de db seviyesinde index atmaliyiz
     @Override
     public Transportation save(Transportation transportation) {
         TransportationEntity entity = TransportationEntity.builder()

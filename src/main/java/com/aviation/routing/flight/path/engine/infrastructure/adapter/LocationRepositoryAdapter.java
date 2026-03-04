@@ -5,9 +5,9 @@ import java.util.Optional;
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.repository.LocationRepository;
-import com.aviation.routing.flight.path.engine.infrastructure.persistence.JpaLocationRepository;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.mapper.LocationMapper;
+import com.aviation.routing.flight.path.engine.infrastructure.persistence.repository.JpaLocationRepository;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.specification.LocationSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 public class LocationRepositoryAdapter implements LocationRepository {
     private final JpaLocationRepository jpaRepository;
 
+    // todo: burada validasyon kurallari isletmeliyiz!!! ayni kod, ayni name ile ikinci bir kayit atilamaz
+    //  kontrol yetmez, bir de db seviyesinde index atmaliyiz
     @Override
     public Location save(Location location) {
         LocationEntity entity = LocationMapper.toEntity(location);
