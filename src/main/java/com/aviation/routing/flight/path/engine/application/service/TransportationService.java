@@ -11,4 +11,5 @@ public interface TransportationService {
     void deleteTransportation(Long id);
     Transportation updateTransportation(Long id, TransportationRequest request);
     Page<Transportation> getTransportations(TransportationRequest filter, Pageable pageable);
+    Page<Transportation> findByOperatingDay(Integer dayValue, Pageable pageable);
 }

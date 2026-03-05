@@ -58,4 +58,9 @@ public class TransportationServiceImpl implements TransportationService {
     public Page<Transportation> getTransportations(TransportationRequest filter, Pageable pageable) {
         return transportationRepository.findAll(filter, pageable);
     }
+
+    @Override
+    public Page<Transportation> findByOperatingDay(Integer dayValue, Pageable pageable) {
+        return transportationRepository.findByOperatingDay(dayValue, pageable);
+    }
 }

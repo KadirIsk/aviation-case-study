@@ -6,6 +6,7 @@ import com.aviation.routing.flight.path.engine.application.dto.TransportationReq
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepository;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
+import com.aviation.routing.flight.path.engine.infrastructure.persistence.mapper.LocationMapper;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.mapper.TransportationMapper;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.repository.JpaTransportationRepository;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.specification.TransportationSpecifications;
@@ -51,7 +52,9 @@ public class TransportationRepositoryAdapter implements TransportationRepository
         return entityPage.map(entity -> Transportation.builder()
             .id(entity.getId())
             .originLocationId(entity.getOriginLocationEntityId())
+            .originLocation(LocationMapper.toDomain(entity.getOriginLocationEntity()))
             .destinationLocationId(entity.getDestinationLocationEntityId())
+            .destinationLocation(LocationMapper.toDomain(entity.getDestinationLocationEntity()))
             .transportationType(entity.getTransportationType())
             .operatingDays(entity.getOperatingDays())
             .build());
@@ -60,5 +63,22 @@ public class TransportationRepositoryAdapter implements TransportationRepository
     @Override
     public void deleteById(Long id) {
         jpaRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Transportation> findByOperatingDay(Integer dayValue, Pageable pageable) {
+        Integer dayMask = 1 << (dayValue - 1);
+
+        Page<TransportationEntity> entityPage = jpaRepository.findByOperatingDay(dayMask, pageable);
+
+        return entityPage.map(entity -> Transportation.builder()
+            .id(entity.getId())
+            .originLocationId(entity.getOriginLocationEntityId())
+            .originLocation(LocationMapper.toDomain(entity.getOriginLocationEntity()))
+            .destinationLocationId(entity.getDestinationLocationEntityId())
+            .destinationLocation(LocationMapper.toDomain(entity.getDestinationLocationEntity()))
+            .transportationType(entity.getTransportationType())
+            .operatingDays(entity.getOperatingDays())
+            .build());
     }
 }

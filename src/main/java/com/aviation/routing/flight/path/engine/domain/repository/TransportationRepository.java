@@ -12,4 +12,5 @@ public interface TransportationRepository {
     Optional<Transportation> findById(Long id);
     Page<Transportation> findAll(TransportationRequest filter, Pageable pageable);
     void deleteById(Long id);
+    Page<Transportation> findByOperatingDay(Integer dayMask, Pageable pageable);
 }
