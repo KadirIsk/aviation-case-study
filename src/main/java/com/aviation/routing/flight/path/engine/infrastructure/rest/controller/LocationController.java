@@ -33,10 +33,7 @@ public class LocationController {
     public ResponseEntity<ApiResponse<Location>> create(@Valid @RequestBody LocationRequest request) {
         Location location = locationService.createLocation(request);
 
-        ApiResponse<Location> apiResponse = ApiResponse.<Location>builder()
-            .message("Location created successfully")
-            .data(location)
-            .build();
+        ApiResponse<Location> apiResponse = ApiResponse.success(location, "Location created successfully");
 
         return ResponseEntity.ok(apiResponse);
     }
@@ -45,10 +42,7 @@ public class LocationController {
     public ResponseEntity<ApiResponse<Location>> getById(@PathVariable Long id) {
         Location location = locationService.getLocation(id);
 
-        ApiResponse<Location> apiResponse = ApiResponse.<Location>builder()
-            .message("Location retrieved successfully")
-            .data(location)
-            .build();
+        ApiResponse<Location> apiResponse = ApiResponse.success(location, "Location retrieved successfully");
 
         return ResponseEntity.ok(apiResponse);
     }
@@ -64,10 +58,7 @@ public class LocationController {
     public ResponseEntity<ApiResponse<Location>> update(@PathVariable Long id, @Valid @RequestBody LocationRequest request) {
         Location location = locationService.updateLocation(id, request);
 
-        ApiResponse<Location> apiResponse = ApiResponse.<Location>builder()
-            .message("Location updated successfully")
-            .data(location)
-            .build();
+        ApiResponse<Location> apiResponse = ApiResponse.success(location, "Location updated successfully");
 
         return ResponseEntity.ok(apiResponse);
     }

@@ -12,17 +12,18 @@ public class ApiResponse<T> {
     private String code;
     private String message;
 
-    public static <T> ApiResponse<T> success(T data) {
+    public static <T> ApiResponse<T> success(T data, String message) {
         return ApiResponse.<T>builder()
-                .code("SUCCESS")
-                .data(data)
-                .build();
+            .code("success")
+            .message(message)
+            .data(data)
+            .build();
     }
 
     public static ApiResponse<Void> error(String code, String message) {
         return ApiResponse.<Void>builder()
-                .code(code)
-                .message(message)
-                .build();
+            .code(code)
+            .message(message)
+            .build();
     }
 }

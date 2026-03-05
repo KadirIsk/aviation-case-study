@@ -33,10 +33,7 @@ public class TransportationController {
     public ResponseEntity<ApiResponse<Transportation>> create(@Valid @RequestBody TransportationRequest request) {
         Transportation transportation = transportationService.createTransportation(request);
 
-        ApiResponse<Transportation> apiResponse = ApiResponse.<Transportation>builder()
-            .message("Transportation created successfully")
-            .data(transportation)
-            .build();
+        ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation created successfully");
 
         return ResponseEntity.ok(apiResponse);
     }
@@ -45,29 +42,29 @@ public class TransportationController {
     public ResponseEntity<ApiResponse<Transportation>> getById(@PathVariable Long id) {
         Transportation transportation = transportationService.getTransportation(id);
 
-        ApiResponse<Transportation> apiResponse = ApiResponse.<Transportation>builder()
-            .message("Transportation retrieved successfully")
-            .data(transportation)
-            .build();
+        ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation retrieved successfully");
 
         return ResponseEntity.ok(apiResponse);
     }
 
     // todo: page'i komple donme
-    @Operation(summary = "Get filtered transportations", description = "Returns a paginated list of transportations based on filters")
+    @Operation(
+        summary = "Get filtered transportations",
+        description = "Returns a paginated list of transportations based on filters"
+    )
     @GetMapping
     public Page<Transportation> getAll(TransportationRequest request, Pageable pageable) {
         return transportationService.getTransportations(request, pageable);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Transportation>> update(@PathVariable Long id, @Valid @RequestBody TransportationRequest request) {
+    public ResponseEntity<ApiResponse<Transportation>> update(
+        @PathVariable Long id,
+        @Valid @RequestBody TransportationRequest request
+    ) {
         Transportation transportation = transportationService.updateTransportation(id, request);
 
-        ApiResponse<Transportation> apiResponse = ApiResponse.<Transportation>builder()
-            .message("Transportation updated successfully")
-            .data(transportation)
-            .build();
+        ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation updated successfully");
 
         return ResponseEntity.ok(apiResponse);
     }
