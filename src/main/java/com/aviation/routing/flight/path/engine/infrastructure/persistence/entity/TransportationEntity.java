@@ -35,18 +35,18 @@ public class TransportationEntity {
     @SequenceGenerator(name = "transportations_seq_gen", sequenceName = "transportations_seq", allocationSize = 1)
     private Long id;
 
+    @NotNull(message = "Origin location is required")
     @Column(name = "origin_location_id", nullable = false)
     private Long originLocationEntityId;
 
-    @NotNull(message = "Origin location is required")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "origin_location_id", insertable = false, updatable = false)
     private LocationEntity originLocationEntity;
 
+    @NotNull(message = "Destination location is required")
     @Column(name = "destination_location_id", nullable = false)
     private Long destinationLocationEntityId;
 
-    @NotNull(message = "Destination location is required")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destination_location_id", insertable = false, updatable = false)
     private LocationEntity destinationLocationEntity;

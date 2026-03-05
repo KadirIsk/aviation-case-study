@@ -5,6 +5,7 @@ import java.util.List;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -21,5 +22,8 @@ public interface JpaTransportationRepository extends JpaRepository<Transportatio
     )
     Page<TransportationEntity> findByOperatingDay(@Param("dayMask") Integer dayMask, Pageable pageable);
 
-    List<TransportationEntity> findByOriginLocationId(Long originLocationId);
+    List<TransportationEntity> findByOriginLocationEntityId(Long originLocationId);
+
+    @Query("SELECT t FROM TransportationEntity t ORDER BY t.originLocationEntityId")
+    Slice<TransportationEntity> findAllByOrderByOriginLocationId(Pageable pageable);
 }

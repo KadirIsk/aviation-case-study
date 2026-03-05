@@ -7,6 +7,7 @@ import com.aviation.routing.flight.path.engine.application.dto.TransportationReq
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface TransportationRepository {
     Transportation save(Transportation location);
@@ -14,6 +15,6 @@ public interface TransportationRepository {
     Page<Transportation> findAll(TransportationRequest filter, Pageable pageable);
     void deleteById(Long id);
     Page<Transportation> findByOperatingDay(Integer dayMask, Pageable pageable);
-
     List<Transportation> getByOriginLocationId(Long originLocationId);
+    Slice<Transportation> findAllByOrderByOriginLocationId(Pageable pageable);
 }

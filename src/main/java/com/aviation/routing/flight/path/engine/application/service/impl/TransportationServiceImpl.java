@@ -9,6 +9,7 @@ import com.aviation.routing.flight.path.engine.domain.repository.TransportationR
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,5 +70,10 @@ public class TransportationServiceImpl implements TransportationService {
     @Override
     public Page<Transportation> findByOperatingDay(Integer dayValue, Pageable pageable) {
         return transportationRepository.findByOperatingDay(dayValue, pageable);
+    }
+
+    @Override
+    public Slice<Transportation> findAllByOrderByOriginLocationId(Pageable pageable) {
+        return transportationRepository.findAllByOrderByOriginLocationId(pageable);
     }
 }

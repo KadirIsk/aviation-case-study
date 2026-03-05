@@ -14,6 +14,7 @@ import com.aviation.routing.flight.path.engine.infrastructure.persistence.specif
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -85,7 +86,7 @@ public class TransportationRepositoryAdapter implements TransportationRepository
 
     @Override
     public List<Transportation> getByOriginLocationId(Long originLocationId) {
-        List<TransportationEntity> transportationEntities = jpaRepository.findByOriginLocationId(originLocationId);
+        List<TransportationEntity> transportationEntities = jpaRepository.findByOriginLocationEntityId(originLocationId);
 
         return transportationEntities.stream()
             .map(entity -> Transportation.builder()
@@ -98,5 +99,18 @@ public class TransportationRepositoryAdapter implements TransportationRepository
                 .operatingDays(entity.getOperatingDays())
                 .build())
             .toList();
+    }
+
+    @Override
+    public Slice<Transportation> findAllByOrderByOriginLocationId(Pageable pageable) {
+        Slice<TransportationEntity> transportationEntities = jpaRepository.findAllByOrderByOriginLocationId(pageable);
+
+        return transportationEntities.map(entity -> Transportation.builder()
+                .id(entity.getId())
+                .originLocationId(entity.getOriginLocationEntityId())
+                .destinationLocationId(entity.getDestinationLocationEntityId())
+                .transportationType(entity.getTransportationType())
+                .operatingDays(entity.getOperatingDays())
+                .build());
     }
 }
