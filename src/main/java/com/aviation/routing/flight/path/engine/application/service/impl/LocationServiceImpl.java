@@ -50,6 +50,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public void deleteLocation(Long id) {
+        // todo: burada transportation's kayitlari da guncellenmeli
         locationRepository.deleteById(id);
     }
 

@@ -1,5 +1,7 @@
 package com.aviation.routing.flight.path.engine.application.service.impl;
 
+import java.util.List;
+
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
@@ -33,6 +35,11 @@ public class TransportationServiceImpl implements TransportationService {
     public Transportation getTransportation(Long id) {
         return transportationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Location not found")); // todo: burada custom exception firlat
+    }
+
+    @Override
+    public List<Transportation> getByOriginLocationId(Long originLocationId) {
+        return transportationRepository.getByOriginLocationId(originLocationId);
     }
 
     @Override

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 
+// todo: bunu get, create, update icin split etmek gerekecek
 @Builder
 public record TransportationRequest(
     @Schema(description = "ID of the origin location", example = "1")
@@ -15,5 +16,5 @@ public record TransportationRequest(
     @Schema(description = "Type of the transportation", example = "FLIGHT, BUS, SUBWAY, UBER")
     @NotBlank String transportationType,
     @Schema(description = "Operating days of the transportation", example = "Monday, Tuesday")
-    Short operatingDays
+    Short operatingDays // todo: belki string olarak alinip, short'a cevrilebilir
 ) { }

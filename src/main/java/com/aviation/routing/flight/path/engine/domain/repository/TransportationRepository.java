@@ -1,5 +1,6 @@
 package com.aviation.routing.flight.path.engine.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
@@ -13,4 +14,6 @@ public interface TransportationRepository {
     Page<Transportation> findAll(TransportationRequest filter, Pageable pageable);
     void deleteById(Long id);
     Page<Transportation> findByOperatingDay(Integer dayMask, Pageable pageable);
+
+    List<Transportation> getByOriginLocationId(Long originLocationId);
 }

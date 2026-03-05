@@ -1,5 +1,7 @@
 package com.aviation.routing.flight.path.engine.infrastructure.persistence.repository;
 
+import java.util.List;
+
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +20,6 @@ public interface JpaTransportationRepository extends JpaRepository<Transportatio
         nativeQuery = true
     )
     Page<TransportationEntity> findByOperatingDay(@Param("dayMask") Integer dayMask, Pageable pageable);
+
+    List<TransportationEntity> findByOriginLocationId(Long originLocationId);
 }

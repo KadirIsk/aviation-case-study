@@ -1,5 +1,6 @@
 package com.aviation.routing.flight.path.engine.infrastructure.adapter;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
@@ -80,5 +81,22 @@ public class TransportationRepositoryAdapter implements TransportationRepository
             .transportationType(entity.getTransportationType())
             .operatingDays(entity.getOperatingDays())
             .build());
+    }
+
+    @Override
+    public List<Transportation> getByOriginLocationId(Long originLocationId) {
+        List<TransportationEntity> transportationEntities = jpaRepository.findByOriginLocationId(originLocationId);
+
+        return transportationEntities.stream()
+            .map(entity -> Transportation.builder()
+                .id(entity.getId())
+                .originLocationId(entity.getOriginLocationEntityId())
+                .originLocation(LocationMapper.toDomain(entity.getOriginLocationEntity()))
+                .destinationLocationId(entity.getDestinationLocationEntityId())
+                .destinationLocation(LocationMapper.toDomain(entity.getDestinationLocationEntity()))
+                .transportationType(entity.getTransportationType())
+                .operatingDays(entity.getOperatingDays())
+                .build())
+            .toList();
     }
 }
