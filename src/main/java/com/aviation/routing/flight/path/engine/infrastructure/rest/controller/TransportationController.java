@@ -31,7 +31,7 @@ public class TransportationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse<Transportation>> create(@Valid @RequestBody TransportationRequest request) {
-        Transportation transportation = transportationService.createTransportation(request);
+        Transportation transportation = transportationService.create(request);
 
         ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation created successfully");
 
@@ -40,7 +40,7 @@ public class TransportationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Transportation>> getById(@PathVariable Long id) {
-        Transportation transportation = transportationService.getTransportation(id);
+        Transportation transportation = transportationService.get(id);
 
         ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation retrieved successfully");
 
@@ -62,7 +62,7 @@ public class TransportationController {
         @PathVariable Long id,
         @Valid @RequestBody TransportationRequest request
     ) {
-        Transportation transportation = transportationService.updateTransportation(id, request);
+        Transportation transportation = transportationService.update(id, request);
 
         ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation updated successfully");
 
@@ -71,7 +71,7 @@ public class TransportationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        transportationService.deleteTransportation(id);
+        transportationService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

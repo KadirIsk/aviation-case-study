@@ -1,4 +1,4 @@
-package com.aviation.routing.flight.path.engine.domain.service;
+package com.aviation.routing.flight.path.engine.domain.port;
 
 import java.util.Map;
 

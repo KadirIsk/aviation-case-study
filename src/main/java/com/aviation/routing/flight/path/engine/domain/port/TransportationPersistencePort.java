@@ -1,7 +1,6 @@
-package com.aviation.routing.flight.path.engine.domain.repository;
+package com.aviation.routing.flight.path.engine.domain.port;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
@@ -9,12 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-public interface TransportationRepositoryPort {
-    Transportation save(Transportation location);
-    Optional<Transportation> findById(Long id);
-    Page<Transportation> findAll(TransportationRequest filter, Pageable pageable);
-    void deleteById(Long id);
-    Page<Transportation> findByOperatingDay(Integer dayMask, Pageable pageable);
+public interface TransportationPersistencePort {
+    Transportation save(Transportation transportation);
+    Transportation get(Long id);
     List<Transportation> getByOriginLocationId(Long originLocationId);
+    void delete(Long id);
+    Transportation update(Transportation transportation);
+    Page<Transportation> getTransportations(TransportationRequest filter, Pageable pageable);
     Slice<Transportation> findAllByOrderByOriginLocationId(Pageable pageable);
 }

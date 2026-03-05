@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
-import com.aviation.routing.flight.path.engine.domain.repository.LocationRepositoryPort;
+import com.aviation.routing.flight.path.engine.domain.repository.LocationPersistencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -24,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class LocationServiceImplTest {
 
     @Mock
-    private LocationRepositoryPort locationRepositoryPort;
+    private LocationPersistencePort locationPersistencePort;
 
     @InjectMocks
     private LocationServiceImpl service;
@@ -46,12 +46,12 @@ class LocationServiceImplTest {
             .locationCode("SAW")
             .build();
 
-        when(locationRepositoryPort.save(any(Location.class))).thenReturn(savedFromRepo);
+        when(locationPersistencePort.save(any(Location.class))).thenReturn(savedFromRepo);
 
         Location result = service.createLocation(request);
 
         ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
-        verify(locationRepositoryPort).save(captor.capture());
+        verify(locationPersistencePort).save(captor.capture());
 
         Location passed = captor.getValue();
         assertNull(passed.getId());
@@ -67,28 +67,28 @@ class LocationServiceImplTest {
     @Test
     void getLocation_whenFound_returnsLocation() {
         Location loc = Location.builder().id(5L).name("A").country("TR").city("X").locationCode("AAA").build();
-        when(locationRepositoryPort.findById(5L)).thenReturn(Optional.of(loc));
+        when(locationPersistencePort.findById(5L)).thenReturn(Optional.of(loc));
 
         Location result = service.getLocation(5L);
 
         assertEquals(5L, result.getId());
-        verify(locationRepositoryPort).findById(5L);
+        verify(locationPersistencePort).findById(5L);
     }
 
     @Test
     void getLocation_whenNotFound_throwsRuntimeException() {
-        when(locationRepositoryPort.findById(99L)).thenReturn(Optional.empty());
+        when(locationPersistencePort.findById(99L)).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.getLocation(99L));
         assertEquals("Location not found", ex.getMessage());
-        verify(locationRepositoryPort).findById(99L);
+        verify(locationPersistencePort).findById(99L);
     }
 
     @Test
     void deleteLocation_delegatesToRepository() {
         service.deleteLocation(7L);
 
-        verify(locationRepositoryPort).deleteById(7L);
-        verifyNoMoreInteractions(locationRepositoryPort);
+        verify(locationPersistencePort).deleteById(7L);
+        verifyNoMoreInteractions(locationPersistencePort);
     }
 }

@@ -3,7 +3,7 @@ package com.aviation.routing.flight.path.engine.application.service.impl;
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
-import com.aviation.routing.flight.path.engine.domain.repository.LocationRepositoryPort;
+import com.aviation.routing.flight.path.engine.domain.repository.LocationPersistencePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class LocationServiceImpl implements LocationService {
-    private final LocationRepositoryPort locationRepositoryPort;
+    private final LocationPersistencePort locationPersistencePort;
 
     @Transactional
     @Override
@@ -25,13 +25,13 @@ public class LocationServiceImpl implements LocationService {
                 .locationCode(request.locationCode())
                 .build();
 
-        return locationRepositoryPort.save(location);
+        return locationPersistencePort.save(location);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Location getLocation(Long id) {
-        return locationRepositoryPort.findById(id)
+        return locationPersistencePort.findById(id)
                 .orElseThrow(() -> new RuntimeException("Location not found"));  // todo: burada custom exception firlat
     }
 
@@ -45,18 +45,18 @@ public class LocationServiceImpl implements LocationService {
         existing.setCity(request.city());
         existing.setLocationCode(request.locationCode());
 
-        return locationRepositoryPort.save(existing);
+        return locationPersistencePort.save(existing);
     }
 
     @Override
     public void deleteLocation(Long id) {
         // todo: burada transportation's kayitlari da guncellenmeli
-        locationRepositoryPort.deleteById(id);
+        locationPersistencePort.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<Location> getLocations(LocationRequest filter, Pageable pageable) {
-        return locationRepositoryPort.findAll(filter, pageable);
+        return locationPersistencePort.findAll(filter, pageable);
     }
 }

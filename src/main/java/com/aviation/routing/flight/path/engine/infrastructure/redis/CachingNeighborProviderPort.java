@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.model.route.finder.EdgeInfo;
-import com.aviation.routing.flight.path.engine.domain.service.NeighborProviderPort;
+import com.aviation.routing.flight.path.engine.domain.port.NeighborProviderPort;
 import com.github.benmanes.caffeine.cache.Cache;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;

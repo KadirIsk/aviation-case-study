@@ -9,12 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 public interface TransportationService {
-    Transportation createTransportation(TransportationRequest request);
-    Transportation getTransportation(Long id);
+    Transportation create(TransportationRequest request);
+    Transportation get(Long id);
     List<Transportation> getByOriginLocationId(Long originLocationId);
-    void deleteTransportation(Long id);
-    Transportation updateTransportation(Long id, TransportationRequest request);
+    void delete(Long id);
+    Transportation update(Long id, TransportationRequest request);
     Page<Transportation> getTransportations(TransportationRequest filter, Pageable pageable);
-    Page<Transportation> findByOperatingDay(Integer dayValue, Pageable pageable);
     Slice<Transportation> findAllByOrderByOriginLocationId(Pageable pageable);
 }

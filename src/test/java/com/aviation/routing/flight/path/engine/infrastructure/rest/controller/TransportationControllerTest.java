@@ -49,7 +49,7 @@ class TransportationControllerTest {
             .operatingDays((short) 1)
             .build();
 
-        when(transportationService.createTransportation(any(TransportationRequest.class))).thenReturn(saved);
+        when(transportationService.create(any(TransportationRequest.class))).thenReturn(saved);
 
         mockMvc.perform(post("/api/v1/transportations")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +70,7 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.data.transportationType").value("FLIGHT"))
             .andExpect(jsonPath("$.data.operatingDays").value(1));
 
-        verify(transportationService).createTransportation(any(TransportationRequest.class));
+        verify(transportationService).create(any(TransportationRequest.class));
     }
 
     @Test
@@ -94,7 +94,7 @@ class TransportationControllerTest {
 
     @Test
     void getById_returns200_andStandardResponseBody() throws Exception {
-        when(transportationService.getTransportation(3L)).thenReturn(
+        when(transportationService.get(3L)).thenReturn(
             Transportation.builder()
                 .id(3L)
                 .originLocationId(1L)
@@ -110,12 +110,12 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.data.id").value(3))
             .andExpect(jsonPath("$.data.transportationType").value("BUS"));
 
-        verify(transportationService).getTransportation(3L);
+        verify(transportationService).get(3L);
     }
 
     @Test
     void getById_whenServiceThrowsRuntimeException_returns404_andStandardErrorResponse() throws Exception {
-        when(transportationService.getTransportation(404L)).thenThrow(new RuntimeException("Transportation not found"));
+        when(transportationService.get(404L)).thenThrow(new RuntimeException("Transportation not found"));
 
         mockMvc.perform(get("/api/v1/transportations/{id}", 404L))
             .andExpect(status().isNotFound())
@@ -123,7 +123,7 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.code").value("NOT_FOUND"))
             .andExpect(jsonPath("$.message").value("Transportation not found"));
 
-        verify(transportationService).getTransportation(404L);
+        verify(transportationService).get(404L);
     }
 
     @Test
@@ -173,7 +173,7 @@ class TransportationControllerTest {
             .operatingDays((short) 1)
             .build();
 
-        when(transportationService.updateTransportation(eq(8L), any(TransportationRequest.class))).thenReturn(updated);
+        when(transportationService.update(eq(8L), any(TransportationRequest.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/transportations/{id}", 8L)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +191,7 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.data.transportationType").value("TRAIN"))
             .andExpect(jsonPath("$.data.operatingDays").value(1));
 
-        verify(transportationService).updateTransportation(eq(8L), any(TransportationRequest.class));
+        verify(transportationService).update(eq(8L), any(TransportationRequest.class));
     }
 
     @Test
@@ -199,6 +199,6 @@ class TransportationControllerTest {
         mockMvc.perform(delete("/api/v1/transportations/{id}", 15L))
             .andExpect(status().isNoContent());
 
-        verify(transportationService).deleteTransportation(15L);
+        verify(transportationService).delete(15L);
     }
 }

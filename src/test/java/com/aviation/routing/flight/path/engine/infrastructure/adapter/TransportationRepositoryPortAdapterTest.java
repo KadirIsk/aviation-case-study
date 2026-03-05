@@ -3,10 +3,9 @@ package com.aviation.routing.flight.path.engine.infrastructure.adapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -22,6 +21,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.redisson.api.RMap;
+import org.redisson.api.RTopic;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -34,8 +36,17 @@ class TransportationRepositoryPortAdapterTest {
     @Mock
     private JpaTransportationRepository jpaTransportationRepository;
 
+    @Mock
+    private RedissonClient redissonClient;
+
+    @Mock
+    private RMap<Long, String> transportationMap;
+
+    @Mock
+    private RTopic invalidationTopic;
+
     @InjectMocks
-    private TransportationRepositoryPortAdapter adapter;
+    private TransportationPersistenceAdapter adapter;
 
     @Test
     void save_buildsEntityFromDomain_savesAndMapsBack() {
@@ -58,6 +69,8 @@ class TransportationRepositoryPortAdapterTest {
                     .operatingDays(e.getOperatingDays())
                     .build();
             });
+        doReturn(transportationMap).when(redissonClient).getMap("node:edges:1");
+        doReturn(invalidationTopic).when(redissonClient).getTopic("graph-invalidation-topic");
 
         Transportation saved = adapter.save(input);
 
@@ -77,6 +90,35 @@ class TransportationRepositoryPortAdapterTest {
         assertEquals(2L, saved.getDestinationLocationId());
         assertEquals("FLIGHT", saved.getTransportationType());
         assertEquals((short)1, saved.getOperatingDays());
+
+        verify(redissonClient).getMap("node:edges:1");
+        verify(transportationMap).put(2L, "FLIGHT:1");
+        verify(redissonClient).getTopic("graph-invalidation-topic");
+        verify(invalidationTopic).publish(1L);
+    }
+
+    @Test
+    void deleteById_delegatesToJpaRepository() {
+        TransportationEntity entity = TransportationEntity.builder()
+            .id(15L)
+            .originLocationEntityId(10L)
+            .destinationLocationEntityId(20L)
+            .transportationType("FLIGHT")
+            .operatingDays((short)1)
+            .build();
+
+        when(jpaTransportationRepository.findById(15L)).thenReturn(Optional.of(entity));
+        doReturn(transportationMap).when(redissonClient).getMap("node:edges:10");
+        doReturn(invalidationTopic).when(redissonClient).getTopic("graph-invalidation-topic");
+
+        adapter.delete(15L);
+
+        verify(jpaTransportationRepository).findById(15L);
+        verify(jpaTransportationRepository).deleteById(15L);
+        verify(redissonClient).getMap("node:edges:10");
+        verify(transportationMap).remove(20L);
+        verify(redissonClient).getTopic("graph-invalidation-topic");
+        verify(invalidationTopic).publish(10L);
     }
 
     @Test
@@ -91,12 +133,12 @@ class TransportationRepositoryPortAdapterTest {
 
         when(jpaTransportationRepository.findById(9L)).thenReturn(Optional.of(entity));
 
-        Optional<Transportation> result = adapter.findById(9L);
+        Transportation result = adapter.get(9L);
 
-        assertTrue(result.isPresent());
-        assertEquals(9L, result.get().getId());
-        assertEquals(3L, result.get().getOriginLocationId());
-        assertEquals(4L, result.get().getDestinationLocationId());
+        assertNotNull(result);
+        assertEquals(9L, result.getId());
+        assertEquals(3L, result.getOriginLocationId());
+        assertEquals(4L, result.getDestinationLocationId());
         verify(jpaTransportationRepository).findById(9L);
     }
 
@@ -115,7 +157,7 @@ class TransportationRepositoryPortAdapterTest {
         when(jpaTransportationRepository.findAll(any(Specification.class), any(Pageable.class)))
             .thenReturn(new PageImpl<>(entities, pageable, entities.size()));
 
-        Page<Transportation> page = adapter.findAll(filter, pageable);
+        Page<Transportation> page = adapter.getTransportations(filter, pageable);
 
         assertNotNull(page);
         assertEquals(2, page.getTotalElements());
@@ -136,13 +178,5 @@ class TransportationRepositoryPortAdapterTest {
         assertEquals((short)1, second.getOperatingDays());
 
         verify(jpaTransportationRepository).findAll(any(Specification.class), any(Pageable.class));
-    }
-
-    @Test
-    void deleteById_delegatesToJpaRepository() {
-        adapter.deleteById(15L);
-
-        verify(jpaTransportationRepository).deleteById(15L);
-        verifyNoMoreInteractions(jpaTransportationRepository);
     }
 }
