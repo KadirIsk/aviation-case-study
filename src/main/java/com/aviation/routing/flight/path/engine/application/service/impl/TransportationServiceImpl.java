@@ -1,11 +1,13 @@
 package com.aviation.routing.flight.path.engine.application.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepository;
+import com.aviation.routing.flight.path.engine.domain.service.GraphStatePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TransportationServiceImpl implements TransportationService {
     private final TransportationRepository transportationRepository;
+    private final GraphStatePort graphStatePort;
 
-    @Transactional
     @Override
     public Transportation createTransportation(TransportationRequest request) {
         Transportation transportation = Transportation.builder()
@@ -28,7 +30,11 @@ public class TransportationServiceImpl implements TransportationService {
             .operatingDays(request.operatingDays())
             .build();
 
-        return transportationRepository.save(transportation);
+        Transportation saved = transportationRepository.save(transportation);
+
+        graphStatePort.updateGraphAndBroadcast(saved);
+
+        return saved;
     }
 
     @Override
@@ -45,20 +51,20 @@ public class TransportationServiceImpl implements TransportationService {
 
     @Override
     public void deleteTransportation(Long id) {
-        transportationRepository.deleteById(id);
+        Optional<Transportation> optionalTransportation = transportationRepository.findById(id);
+        optionalTransportation.ifPresent(graphStatePort::deleteTransportationAndBroadcast);
     }
 
     @Override
-    @Transactional
     public Transportation updateTransportation(Long id, TransportationRequest request) {
         Transportation existing = getTransportation(id);
-
-        existing.setOriginLocationId(request.originLocationId());
-        existing.setDestinationLocationId(request.destinationLocationId());
-        existing.setTransportationType(request.transportationType());
         existing.setOperatingDays(request.operatingDays());
 
-        return transportationRepository.save(existing);
+        existing = transportationRepository.save(existing);
+
+        graphStatePort.updateGraphAndBroadcast(existing);
+
+        return existing;
     }
 
     @Override
