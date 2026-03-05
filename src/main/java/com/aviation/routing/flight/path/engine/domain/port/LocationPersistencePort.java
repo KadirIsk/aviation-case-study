@@ -1,4 +1,4 @@
-package com.aviation.routing.flight.path.engine.domain.repository;
+package com.aviation.routing.flight.path.engine.domain.port;
 
 import java.util.Optional;
 

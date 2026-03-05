@@ -3,7 +3,7 @@ package com.aviation.routing.flight.path.engine.application.service.impl;
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
-import com.aviation.routing.flight.path.engine.domain.repository.LocationPersistencePort;
+import com.aviation.routing.flight.path.engine.domain.port.LocationPersistencePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

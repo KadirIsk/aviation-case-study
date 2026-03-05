@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
-import com.aviation.routing.flight.path.engine.domain.repository.LocationPersistencePort;
+import com.aviation.routing.flight.path.engine.domain.port.LocationPersistencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
