@@ -4,6 +4,6 @@ import java.util.Map;
 
 import com.aviation.routing.flight.path.engine.domain.model.route.finder.EdgeInfo;
 
-public interface NeighborProvider {
+public interface NeighborProviderPort {
     Map<Long, EdgeInfo> getNeighbors(Long nodeId, short requestedDayMask);
 }

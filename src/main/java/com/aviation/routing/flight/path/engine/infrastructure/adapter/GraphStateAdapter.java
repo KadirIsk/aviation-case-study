@@ -1,7 +1,7 @@
 package com.aviation.routing.flight.path.engine.infrastructure.adapter;
 
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
-import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepository;
+import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepositoryPort;
 import com.aviation.routing.flight.path.engine.domain.service.GraphStatePort;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RedissonClient;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class GraphStateAdapter implements GraphStatePort {
-    private final TransportationRepository repository;
+    private final TransportationRepositoryPort repository;
     private final RedissonClient redissonClient;
 
     @Override

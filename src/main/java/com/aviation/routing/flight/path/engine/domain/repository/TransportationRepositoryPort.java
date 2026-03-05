@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-public interface TransportationRepository {
+public interface TransportationRepositoryPort {
     Transportation save(Transportation location);
     Optional<Transportation> findById(Long id);
     Page<Transportation> findAll(TransportationRequest filter, Pageable pageable);

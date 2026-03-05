@@ -12,7 +12,8 @@ import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
-import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepository;
+import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepositoryPort;
+import com.aviation.routing.flight.path.engine.domain.service.GraphStatePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -24,7 +25,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TransportationServiceImplTest {
 
     @Mock
-    private TransportationRepository transportationRepository;
+    private TransportationRepositoryPort transportationRepositoryPort;
+
+    @Mock
+    private GraphStatePort graphStatePort;
 
     @InjectMocks
     private TransportationServiceImpl service;
@@ -46,12 +50,12 @@ class TransportationServiceImplTest {
             .operatingDays((short)1)
             .build();
 
-        when(transportationRepository.save(any(Transportation.class))).thenReturn(savedFromRepo);
+        when(transportationRepositoryPort.save(any(Transportation.class))).thenReturn(savedFromRepo);
 
         Transportation result = service.createTransportation(request);
 
         ArgumentCaptor<Transportation> captor = ArgumentCaptor.forClass(Transportation.class);
-        verify(transportationRepository).save(captor.capture());
+        verify(transportationRepositoryPort).save(captor.capture());
 
         Transportation passed = captor.getValue();
         assertNull(passed.getId());
@@ -61,33 +65,57 @@ class TransportationServiceImplTest {
         assertEquals((short)1, passed.getOperatingDays());
 
         assertEquals(99L, result.getId());
+        verify(graphStatePort).updateGraphAndBroadcast(savedFromRepo);
     }
+
 
     @Test
     void getTransportation_whenFound_returnsTransportation() {
         Transportation t = Transportation.builder().id(1L).originLocationId(1L).destinationLocationId(2L).build();
-        when(transportationRepository.findById(1L)).thenReturn(Optional.of(t));
+        when(transportationRepositoryPort.findById(1L)).thenReturn(Optional.of(t));
 
         Transportation result = service.getTransportation(1L);
 
         assertEquals(1L, result.getId());
-        verify(transportationRepository).findById(1L);
+        verify(transportationRepositoryPort).findById(1L);
     }
 
     @Test
     void getTransportation_whenNotFound_throwsRuntimeException() {
-        when(transportationRepository.findById(404L)).thenReturn(Optional.empty());
+        when(transportationRepositoryPort.findById(404L)).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.getTransportation(404L));
         assertEquals("Location not found", ex.getMessage());
-        verify(transportationRepository).findById(404L);
+        verify(transportationRepositoryPort).findById(404L);
     }
 
     @Test
     void deleteTransportation_delegatesToRepository() {
+        Transportation t = Transportation.builder().id(5L).originLocationId(1L).destinationLocationId(2L).build();
+        when(transportationRepositoryPort.findById(5L)).thenReturn(Optional.of(t));
+
         service.deleteTransportation(5L);
 
-        verify(transportationRepository).deleteById(5L);
-        verifyNoMoreInteractions(transportationRepository);
+        verify(graphStatePort).deleteTransportationAndBroadcast(any(Transportation.class));
+        verifyNoMoreInteractions(graphStatePort);
+    }
+
+    @Test
+    void deleteTransportation_delegatesToGraphStatePort_whenTransportationExists() {
+        Transportation existing = Transportation.builder()
+            .id(5L)
+            .originLocationId(1L)
+            .destinationLocationId(2L)
+            .transportationType("FLIGHT")
+            .operatingDays((short)1)
+            .build();
+
+        when(transportationRepositoryPort.findById(5L)).thenReturn(Optional.of(existing));
+
+        service.deleteTransportation(5L);
+
+        verify(transportationRepositoryPort).findById(5L);
+        verify(graphStatePort).deleteTransportationAndBroadcast(existing);
+        verifyNoMoreInteractions(transportationRepositoryPort);
     }
 }

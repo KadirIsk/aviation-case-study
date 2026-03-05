@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
-import com.aviation.routing.flight.path.engine.domain.repository.LocationRepository;
+import com.aviation.routing.flight.path.engine.domain.repository.LocationRepositoryPort;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.mapper.LocationMapper;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.repository.JpaLocationRepository;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class LocationRepositoryAdapter implements LocationRepository {
+public class LocationRepositoryPortAdapter implements LocationRepositoryPort {
     private final JpaLocationRepository jpaRepository;
 
     // todo: burada validasyon kurallari isletmeliyiz!!! ayni kod, ayni name ile ikinci bir kayit atilamaz

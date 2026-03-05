@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.model.route.finder.EdgeInfo;
-import com.aviation.routing.flight.path.engine.domain.service.NeighborProvider;
+import com.aviation.routing.flight.path.engine.domain.service.NeighborProviderPort;
 import com.github.benmanes.caffeine.cache.Cache;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
@@ -21,8 +21,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CachingNeighborProvider implements NeighborProvider {
-
+public class CachingNeighborProviderPort implements NeighborProviderPort {
     private final Cache<Long, Map<Long, EdgeInfo>> localCache;
     private final RedissonClient redissonClient;
     private final TransportationService transportationService;

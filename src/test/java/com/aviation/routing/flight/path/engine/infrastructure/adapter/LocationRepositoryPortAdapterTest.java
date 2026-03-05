@@ -29,13 +29,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 @ExtendWith(MockitoExtension.class)
-class LocationRepositoryAdapterTest {
+class LocationRepositoryPortAdapterTest {
 
     @Mock
     private JpaLocationRepository jpaLocationRepository;
 
     @InjectMocks
-    private LocationRepositoryAdapter adapter;
+    private LocationRepositoryPortAdapter adapter;
 
     @Test
     void save_mapsDomainToEntity_savesAndMapsBack() {

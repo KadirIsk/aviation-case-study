@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
-import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepository;
+import com.aviation.routing.flight.path.engine.domain.repository.TransportationRepositoryPort;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.mapper.LocationMapper;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.mapper.TransportationMapper;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class TransportationRepositoryAdapter implements TransportationRepository {
+public class TransportationRepositoryPortAdapter implements TransportationRepositoryPort {
     private final JpaTransportationRepository jpaRepository;
 
     // todo: burada validasyon kurallari isletmeliyiz!!! ayni origin, destination ve type ile ikinci kayit atilmamali

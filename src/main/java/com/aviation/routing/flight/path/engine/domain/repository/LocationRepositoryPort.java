@@ -7,7 +7,7 @@ import com.aviation.routing.flight.path.engine.domain.model.Location;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface LocationRepository {
+public interface LocationRepositoryPort {
     Location save(Location location);
     Optional<Location> findById(Long id);
     Page<Location> findAll(LocationRequest filter, Pageable pageable);
