@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,11 @@ import lombok.experimental.FieldNameConstants;
 
 @FieldNameConstants
 @Entity
-@Table(name = "locations")
+@Table(
+    name = "locations", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "name"),
+    @UniqueConstraint(columnNames = "location_code")}
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,7 +38,7 @@ public class LocationEntity {
 
     @NotBlank(message = "Location name cannot be blank")
     @Size(max = 255, message = "Location name must be less than 255 characters")
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @NotBlank(message = "Country cannot be blank")
@@ -48,6 +53,6 @@ public class LocationEntity {
 
     @NotBlank(message = "Location code cannot be blank")
     @Size(max = 10, message = "Location code must be less than 10 characters")
-    @Column(name = "location_code", nullable = false, length = 10)
+    @Column(name = "location_code", unique = true, nullable = false, length = 10)
     private String locationCode;
 }

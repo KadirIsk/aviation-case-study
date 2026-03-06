@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.port.TransportationPersistencePort;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class TransportationServiceImplTest {
 
     @Test
     void createTransportation_builds_fromRequest_andSaves() {
-        TransportationRequest request = TransportationRequest.builder()
+        CreateTransportationUseCase request = CreateTransportationUseCase.builder()
             .originLocationId(10L)
             .destinationLocationId(20L)
             .transportationType("FLIGHT")

@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.port.LocationPersistencePort;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class LocationServiceImplTest {
 
     @Test
     void createLocation_buildsDomainFromRequest_andSaves() {
-        LocationRequest request = LocationRequest.builder()
+        CreateLocationUseCase request = CreateLocationUseCase.builder()
             .name("Sabiha")
             .country("TR")
             .city("Istanbul")

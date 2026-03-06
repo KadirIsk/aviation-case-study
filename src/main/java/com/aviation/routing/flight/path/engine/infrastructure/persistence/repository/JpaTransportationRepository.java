@@ -26,4 +26,16 @@ public interface JpaTransportationRepository extends JpaRepository<Transportatio
 
     @Query("SELECT t FROM TransportationEntity t ORDER BY t.originLocationEntityId")
     Slice<TransportationEntity> findAllByOrderByOriginLocationId(Pageable pageable);
+
+    @Query(
+        "SELECT COUNT(t) > 0 FROM TransportationEntity t " +
+        "WHERE t.originLocationEntity.id = :originId " +
+        "AND t.destinationLocationEntity.id = :destinationId " +
+        "AND t.transportationType = :type"
+    )
+    boolean existsByRouteAndType(
+        @Param("originId") Long originId,
+        @Param("destinationId") Long destinationId,
+        @Param("type") String type
+    );
 }

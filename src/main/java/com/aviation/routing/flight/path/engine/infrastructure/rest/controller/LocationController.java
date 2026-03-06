@@ -1,9 +1,11 @@
 package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
-import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.ApiResponse;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateLocationRequest;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateLocationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +32,8 @@ public class LocationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ApiResponse<Location>> create(@Valid @RequestBody LocationRequest request) {
-        Location location = locationService.createLocation(request);
+    public ResponseEntity<ApiResponse<Location>> create(@Valid @RequestBody CreateLocationRequest request) {
+        Location location = locationService.createLocation(request.toUseCase());
 
         ApiResponse<Location> apiResponse = ApiResponse.success(location, "Location created successfully");
 
@@ -50,13 +52,13 @@ public class LocationController {
     // todo: page'i komple donme
     @Operation(summary = "Get filtered locations", description = "Returns a paginated list of locations based on filters")
     @GetMapping
-    public Page<Location> getAll(LocationRequest request, Pageable pageable) {
+    public Page<Location> getAll(CreateLocationUseCase request, Pageable pageable) {
         return locationService.getLocations(request, pageable);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Location>> update(@PathVariable Long id, @Valid @RequestBody LocationRequest request) {
-        Location location = locationService.updateLocation(id, request);
+    public ResponseEntity<ApiResponse<Location>> update(@PathVariable Long id, @Valid @RequestBody UpdateLocationRequest request) {
+        Location location = locationService.updateLocation(request.toUseCase(id));
 
         ApiResponse<Location> apiResponse = ApiResponse.success(location, "Location updated successfully");
 

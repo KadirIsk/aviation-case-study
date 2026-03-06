@@ -1,9 +1,11 @@
 package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
-import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.ApiResponse;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateTransportationRequest;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateTransportationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +32,8 @@ public class TransportationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ApiResponse<Transportation>> create(@Valid @RequestBody TransportationRequest request) {
-        Transportation transportation = transportationService.create(request);
+    public ResponseEntity<ApiResponse<Transportation>> create(@Valid @RequestBody CreateTransportationRequest request) {
+        Transportation transportation = transportationService.create(request.toUseCase());
 
         ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation created successfully");
 
@@ -53,16 +55,16 @@ public class TransportationController {
         description = "Returns a paginated list of transportations based on filters"
     )
     @GetMapping
-    public Page<Transportation> getAll(TransportationRequest request, Pageable pageable) {
+    public Page<Transportation> getAll(CreateTransportationUseCase request, Pageable pageable) {
         return transportationService.getTransportations(request, pageable);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Transportation>> update(
         @PathVariable Long id,
-        @Valid @RequestBody TransportationRequest request
+        @Valid @RequestBody UpdateTransportationRequest request
     ) {
-        Transportation transportation = transportationService.update(id, request);
+        Transportation transportation = transportationService.update(request.toUseCase(id));
 
         ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation updated successfully");
 

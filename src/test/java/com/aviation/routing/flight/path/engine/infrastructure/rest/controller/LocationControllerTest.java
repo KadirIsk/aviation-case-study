@@ -1,7 +1,6 @@
 package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -14,7 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
-import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.UpdateLocationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.exception.GlobalExceptionHandler;
@@ -49,7 +49,7 @@ class LocationControllerTest {
             .locationCode("SAW")
             .build();
 
-        when(locationService.createLocation(any(LocationRequest.class))).thenReturn(saved);
+        when(locationService.createLocation(any(CreateLocationUseCase.class))).thenReturn(saved);
 
         mockMvc.perform(post("/api/v1/locations")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +70,7 @@ class LocationControllerTest {
             .andExpect(jsonPath("$.data.city").value("Istanbul"))
             .andExpect(jsonPath("$.data.locationCode").value("SAW"));
 
-        verify(locationService).createLocation(any(LocationRequest.class));
+        verify(locationService).createLocation(any(CreateLocationUseCase.class));
     }
 
     @Test
@@ -139,7 +139,7 @@ class LocationControllerTest {
             2
         );
 
-        when(locationService.getLocations(any(LocationRequest.class), any(org.springframework.data.domain.Pageable.class)))
+        when(locationService.getLocations(any(CreateLocationUseCase.class), any(org.springframework.data.domain.Pageable.class)))
             .thenReturn(page);
 
         mockMvc.perform(get("/api/v1/locations")
@@ -152,7 +152,7 @@ class LocationControllerTest {
             .andExpect(jsonPath("$.content[0].id").value(1))
             .andExpect(jsonPath("$.content[0].locationCode").value("AAA"));
 
-        verify(locationService).getLocations(any(LocationRequest.class), any(org.springframework.data.domain.Pageable.class));
+        verify(locationService).getLocations(any(CreateLocationUseCase.class), any(org.springframework.data.domain.Pageable.class));
     }
 
     @Test
@@ -165,7 +165,7 @@ class LocationControllerTest {
             .locationCode("ESB")
             .build();
 
-        when(locationService.updateLocation(eq(7L), any(LocationRequest.class))).thenReturn(updated);
+        when(locationService.updateLocation(any(UpdateLocationUseCase.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/locations/{id}", 7L)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +182,7 @@ class LocationControllerTest {
             .andExpect(jsonPath("$.data.id").value(7))
             .andExpect(jsonPath("$.data.locationCode").value("ESB"));
 
-        verify(locationService).updateLocation(eq(7L), any(LocationRequest.class));
+        verify(locationService).updateLocation(any(UpdateLocationUseCase.class));
     }
 
     @Test

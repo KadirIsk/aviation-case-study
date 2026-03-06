@@ -3,7 +3,7 @@ package com.aviation.routing.flight.path.engine.infrastructure.adapter;
 import java.util.List;
 import java.util.Optional;
 
-import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.domain.model.EventType;
 import com.aviation.routing.flight.path.engine.domain.model.GraphSyncEvent;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
@@ -115,7 +115,7 @@ public class TransportationPersistenceAdapter implements TransportationPersisten
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Transportation> getTransportations(TransportationRequest filter, Pageable pageable) {
+    public Page<Transportation> getTransportations(CreateTransportationUseCase filter, Pageable pageable) {
         var spec = TransportationSpecifications.withFilters(filter);
 
         Page<TransportationEntity> entityPage = jpaRepository.findAll(spec, pageable);
@@ -142,5 +142,10 @@ public class TransportationPersistenceAdapter implements TransportationPersisten
             .transportationType(entity.getTransportationType())
             .operatingDays(entity.getOperatingDays())
             .build());
+    }
+
+    @Override
+    public boolean existsByRouteAndType(Long originId, Long destinationId, String type) {
+        return jpaRepository.existsByRouteAndType(originId, destinationId, type);
     }
 }

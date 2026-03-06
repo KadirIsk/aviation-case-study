@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,7 +23,12 @@ import lombok.experimental.FieldNameConstants;
 
 @FieldNameConstants
 @Entity
-@Table(name = "transportations")
+@Table(name = "transportations", uniqueConstraints = {
+    @UniqueConstraint(
+        name = "uc_transportations_origin_dest_type",
+        columnNames = {"origin_location_id", "destination_location_id", "transportation_type"}
+    )
+})
 @Getter
 @Setter
 @NoArgsConstructor

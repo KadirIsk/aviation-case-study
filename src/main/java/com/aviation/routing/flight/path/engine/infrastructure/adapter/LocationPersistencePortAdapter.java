@@ -2,7 +2,7 @@ package com.aviation.routing.flight.path.engine.infrastructure.adapter;
 
 import java.util.Optional;
 
-import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.port.LocationPersistencePort;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
@@ -35,7 +35,7 @@ public class LocationPersistencePortAdapter implements LocationPersistencePort {
     }
 
     @Override
-    public Page<Location> findAll(LocationRequest filter, Pageable pageable) {
+    public Page<Location> findAll(CreateLocationUseCase filter, Pageable pageable) {
         var spec = LocationSpecifications.withFilters(filter);
 
         Page<LocationEntity> entityPage = jpaRepository.findAll(spec, pageable);
@@ -52,5 +52,10 @@ public class LocationPersistencePortAdapter implements LocationPersistencePort {
     @Override
     public void deleteById(Long id) {
         jpaRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByNameOrLocationCode(String name, String locationCode) {
+        return jpaRepository.existsByNameOrLocationCode(name, locationCode);
     }
 }

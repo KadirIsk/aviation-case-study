@@ -3,7 +3,7 @@ package com.aviation.routing.flight.path.engine.infrastructure.persistence.speci
 import java.util.ArrayList;
 import java.util.List;
 
-import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
 import jakarta.persistence.criteria.Path;
@@ -14,7 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 @UtilityClass
 public class TransportationSpecifications {
 
-    public static Specification<TransportationEntity> withFilters(TransportationRequest filter) {
+    public static Specification<TransportationEntity> withFilters(CreateTransportationUseCase filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 

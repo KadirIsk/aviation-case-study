@@ -1,14 +1,14 @@
-package com.aviation.routing.flight.path.engine.application.dto;
+package com.aviation.routing.flight.path.engine.infrastructure.rest.dto;
 
+import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 
-// todo: bunu get, create, update icin split etmek gerekecek
 @Builder
-public record TransportationRequest(
+public record CreateTransportationRequest(
     @Schema(description = "ID of the origin location", example = "1")
     @NotNull @Positive Long originLocationId,
     @Schema(description = "ID of the destination location", example = "2")
@@ -17,4 +17,13 @@ public record TransportationRequest(
     @NotBlank String transportationType,
     @Schema(description = "Operating days of the transportation", example = "Monday, Tuesday")
     Short operatingDays // todo: belki string olarak alinip, short'a cevrilebilir
-) { }
+) {
+    public CreateTransportationUseCase toUseCase() {
+        return new CreateTransportationUseCase(
+            this.originLocationId(),
+            this.destinationLocationId(),
+            this.transportationType(),
+            this.operatingDays()
+        );
+    }
+}

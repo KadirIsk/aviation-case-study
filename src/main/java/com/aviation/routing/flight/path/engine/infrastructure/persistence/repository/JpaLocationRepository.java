@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaLocationRepository extends JpaRepository<LocationEntity, Long>,
     JpaSpecificationExecutor<LocationEntity> {
+    boolean existsByNameOrLocationCode(String name, String locationCode);
 }

@@ -1,0 +1,18 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+	<changeSet id="20260307120000-1" author="kadir">
+
+		<addUniqueConstraint tableName="locations"
+		                     columnNames="name"
+		                     constraintName="uc_locations_name"/>
+
+		<addUniqueConstraint tableName="locations"
+		                     columnNames="location_code"
+		                     constraintName="uc_locations_location_code"/>
+
+	</changeSet>
+
+</databaseChangeLog>

@@ -3,7 +3,7 @@ package com.aviation.routing.flight.path.engine.infrastructure.persistence.speci
 import java.util.ArrayList;
 import java.util.List;
 
-import com.aviation.routing.flight.path.engine.application.dto.LocationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
 import jakarta.persistence.criteria.Predicate;
 import lombok.experimental.UtilityClass;
@@ -13,7 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 @UtilityClass
 public class LocationSpecifications {
 
-    public static Specification<LocationEntity> withFilters(LocationRequest filter) {
+    public static Specification<LocationEntity> withFilters(CreateLocationUseCase filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 

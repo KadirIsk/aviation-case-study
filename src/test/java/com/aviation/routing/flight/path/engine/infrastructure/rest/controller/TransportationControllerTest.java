@@ -1,7 +1,6 @@
 package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -14,7 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
-import com.aviation.routing.flight.path.engine.application.dto.TransportationRequest;
+import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.UpdateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.exception.GlobalExceptionHandler;
@@ -49,7 +49,7 @@ class TransportationControllerTest {
             .operatingDays((short) 1)
             .build();
 
-        when(transportationService.create(any(TransportationRequest.class))).thenReturn(saved);
+        when(transportationService.create(any(CreateTransportationUseCase.class))).thenReturn(saved);
 
         mockMvc.perform(post("/api/v1/transportations")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +70,7 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.data.transportationType").value("FLIGHT"))
             .andExpect(jsonPath("$.data.operatingDays").value(1));
 
-        verify(transportationService).create(any(TransportationRequest.class));
+        verify(transportationService).create(any(CreateTransportationUseCase.class));
     }
 
     @Test
@@ -142,7 +142,7 @@ class TransportationControllerTest {
         );
 
         when(transportationService.getTransportations(
-            any(TransportationRequest.class),
+            any(CreateTransportationUseCase.class),
             any(org.springframework.data.domain.Pageable.class)
         ))
             .thenReturn(page);
@@ -158,7 +158,7 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.content[0].transportationType").value("FLIGHT"));
 
         verify(transportationService).getTransportations(
-            any(TransportationRequest.class),
+            any(CreateTransportationUseCase.class),
             any(org.springframework.data.domain.Pageable.class)
         );
     }
@@ -173,7 +173,7 @@ class TransportationControllerTest {
             .operatingDays((short) 1)
             .build();
 
-        when(transportationService.update(eq(8L), any(TransportationRequest.class))).thenReturn(updated);
+        when(transportationService.update(any(UpdateTransportationUseCase.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/transportations/{id}", 8L)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +191,7 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.data.transportationType").value("TRAIN"))
             .andExpect(jsonPath("$.data.operatingDays").value(1));
 
-        verify(transportationService).update(eq(8L), any(TransportationRequest.class));
+        verify(transportationService).update(any(UpdateTransportationUseCase.class));
     }
 
     @Test
