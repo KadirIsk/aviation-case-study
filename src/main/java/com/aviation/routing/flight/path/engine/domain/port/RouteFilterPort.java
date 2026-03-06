@@ -4,6 +4,6 @@ import java.util.List;
 
 import com.aviation.routing.flight.path.engine.domain.model.projection.RouteCandidate;
 
-public interface RouteFinderPort {
-    List<RouteCandidate> findRoutes(Long originId, Long destinationId, short requestedDayMask);
+public interface RouteFilterPort {
+    List<RouteCandidate> filterValidRoutes(List<RouteCandidate> candidates);
 }

@@ -14,6 +14,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class CachingNeighborProviderPort implements NeighborProviderPort {
     public Map<Long, EdgeInfo> getNeighbors(Long nodeId, short requestedDayMask) {
         Map<Long, EdgeInfo> allNeighbors = localCache.get(nodeId, this::fetchFromRedis);
 
-        if (allNeighbors == null || allNeighbors.isEmpty()) {
+        if (MapUtils.isEmpty(allNeighbors)) {
             return Collections.emptyMap();
         }
 
@@ -62,7 +63,7 @@ public class CachingNeighborProviderPort implements NeighborProviderPort {
     }
 
     private Map<Long, EdgeInfo> convertToEdgeInfoMap(Map<Long, String> redisData) {
-        if (redisData == null || redisData.isEmpty()) {
+        if (MapUtils.isEmpty(redisData)) {
             return Collections.emptyMap();
         }
 
