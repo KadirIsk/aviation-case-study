@@ -31,7 +31,6 @@ build/
 *.iws
 *.iml
 *.ipr
-out/
 !**/src/main/resources/*.xml
 !**/src/test/resources/*.xml
 

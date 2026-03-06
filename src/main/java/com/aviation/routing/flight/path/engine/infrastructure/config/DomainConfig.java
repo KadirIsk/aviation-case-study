@@ -2,17 +2,25 @@ package com.aviation.routing.flight.path.engine.infrastructure.config;
 
 import java.util.List;
 
+import com.aviation.routing.flight.path.engine.domain.port.NeighborProviderPort;
 import com.aviation.routing.flight.path.engine.domain.port.RouteFilterPort;
+import com.aviation.routing.flight.path.engine.domain.port.RouteFinderPort;
 import com.aviation.routing.flight.path.engine.domain.port.RouteRulePort;
 import com.aviation.routing.flight.path.engine.domain.service.impl.FlightTransferLimitRule;
 import com.aviation.routing.flight.path.engine.domain.service.impl.MaxTransportationRule;
 import com.aviation.routing.flight.path.engine.domain.service.impl.RouteFilterService;
+import com.aviation.routing.flight.path.engine.domain.service.impl.RouteFinderService;
 import com.aviation.routing.flight.path.engine.domain.service.impl.SingleFlightRule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DomainConfig {
+
+    @Bean
+    public RouteFinderPort routeFinderPort(NeighborProviderPort neighborProviderPort) {
+        return new RouteFinderService(neighborProviderPort);
+    }
 
     @Bean
     public RouteFilterPort routeFilterPort(List<RouteRulePort> rules) {
