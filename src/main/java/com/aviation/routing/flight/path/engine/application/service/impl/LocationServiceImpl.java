@@ -2,7 +2,9 @@ package com.aviation.routing.flight.path.engine.application.service.impl;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
 import com.aviation.routing.flight.path.engine.application.dto.UpdateLocationUseCase;
+import com.aviation.routing.flight.path.engine.application.exception.DuplicateResourceException;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
+import com.aviation.routing.flight.path.engine.common.ErrorCode;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.port.LocationPersistencePort;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +23,15 @@ public class LocationServiceImpl implements LocationService {
     public Location createLocation(CreateLocationUseCase request) {
         boolean exists = locationPersistencePort.existsByNameOrLocationCode(request.name(), request.locationCode());
         if (exists) {
-//            throw new DuplicateResourceException("A location with this name or location code already exists.");
-            throw new RuntimeException("A location with this name or location code already exists.");
+            throw new DuplicateResourceException(ErrorCode.LOC_DUP_001, null);
         }
 
         Location location = Location.builder()
-                .name(request.name())
-                .country(request.country())
-                .city(request.city())
-                .locationCode(request.locationCode())
-                .build();
+            .name(request.name())
+            .country(request.country())
+            .city(request.city())
+            .locationCode(request.locationCode())
+            .build();
 
         return locationPersistencePort.save(location);
     }
@@ -39,7 +40,7 @@ public class LocationServiceImpl implements LocationService {
     @Transactional(readOnly = true)
     public Location getLocation(Long id) {
         return locationPersistencePort.findById(id)
-                .orElseThrow(() -> new RuntimeException("Location not found"));  // todo: burada custom exception firlat
+            .orElseThrow(() -> new DuplicateResourceException(ErrorCode.TRN_DUP_001, null));
     }
 
     @Override

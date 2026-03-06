@@ -19,8 +19,6 @@ import org.springframework.stereotype.Component;
 public class LocationPersistencePortAdapter implements LocationPersistencePort {
     private final JpaLocationRepository jpaRepository;
 
-    // todo: burada validasyon kurallari isletmeliyiz!!! ayni kod, ayni name ile ikinci bir kayit atilamaz
-    //  kontrol yetmez, bir de db seviyesinde index atmaliyiz
     @Override
     public Location save(Location location) {
         LocationEntity entity = LocationMapper.toEntity(location);

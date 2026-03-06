@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.dto.UpdateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.application.exception.DuplicateResourceException;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
+import com.aviation.routing.flight.path.engine.common.ErrorCode;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.port.TransportationPersistencePort;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +30,7 @@ public class TransportationServiceImpl implements TransportationService {
         );
 
         if (exists) {
-            //            throw new DuplicateRouteException("A transportation between these locations already exists.");
-            throw new RuntimeException("A transportation between these locations already exists.");
+            throw new DuplicateResourceException(ErrorCode.TRN_DUP_001, null);
         }
 
         Transportation transportation = Transportation.builder()
@@ -58,7 +59,6 @@ public class TransportationServiceImpl implements TransportationService {
         persistencePort.delete(id);
     }
 
-    // todo: fonk input'u degistirelim
     @Override
     public Transportation update(UpdateTransportationUseCase request) {
         Transportation transportation = Transportation.builder()

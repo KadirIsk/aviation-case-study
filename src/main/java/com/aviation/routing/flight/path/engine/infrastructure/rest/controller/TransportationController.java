@@ -2,8 +2,8 @@ package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
+import com.aviation.routing.flight.path.engine.common.ApiResponse;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
-import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.ApiResponse;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateTransportationRequest;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateTransportationRequest;
 import io.swagger.v3.oas.annotations.Operation;

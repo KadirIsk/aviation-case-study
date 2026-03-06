@@ -2,8 +2,8 @@ package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
+import com.aviation.routing.flight.path.engine.common.ApiResponse;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
-import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.ApiResponse;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateLocationRequest;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateLocationRequest;
 import io.swagger.v3.oas.annotations.Operation;

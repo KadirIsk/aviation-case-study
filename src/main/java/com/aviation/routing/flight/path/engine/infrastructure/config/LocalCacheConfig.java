@@ -1,4 +1,4 @@
-package com.aviation.routing.flight.path.engine.config;
+package com.aviation.routing.flight.path.engine.infrastructure.config;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

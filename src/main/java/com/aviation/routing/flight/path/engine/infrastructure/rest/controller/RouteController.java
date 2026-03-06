@@ -3,8 +3,8 @@ package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 import java.util.List;
 
 import com.aviation.routing.flight.path.engine.application.port.in.FindFlightRoutesUseCase;
+import com.aviation.routing.flight.path.engine.common.ApiResponse;
 import com.aviation.routing.flight.path.engine.domain.model.route.finder.RouteResponse;
-import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

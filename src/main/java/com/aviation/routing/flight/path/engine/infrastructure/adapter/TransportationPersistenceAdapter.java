@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.application.exception.DuplicateResourceException;
+import com.aviation.routing.flight.path.engine.common.ErrorCode;
 import com.aviation.routing.flight.path.engine.domain.model.EventType;
 import com.aviation.routing.flight.path.engine.domain.model.GraphSyncEvent;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
@@ -92,7 +94,7 @@ public class TransportationPersistenceAdapter implements TransportationPersisten
     @Transactional(readOnly = true)
     public Transportation get(Long id) {
         TransportationEntity entity = jpaRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Location not found"));// todo: burada custom exception firlat
+            .orElseThrow(() -> new DuplicateResourceException(ErrorCode.LOC_NF_001, null));
         return TransportationMapper.toDomain(entity);
     }
 
