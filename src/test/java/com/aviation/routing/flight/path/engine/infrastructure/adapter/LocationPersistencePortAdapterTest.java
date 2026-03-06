@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
-import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.LocationFilterRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.repository.JpaLocationRepository;
@@ -111,7 +111,7 @@ class LocationPersistencePortAdapterTest {
 
     @Test
     void findAll_mapsAllEntitiesToDomain() {
-        CreateLocationUseCase filter = CreateLocationUseCase.builder().build();
+        LocationFilterRequest filter = LocationFilterRequest.builder().build();
         Pageable pageable = PageRequest.of(0, 10);
 
         List<LocationEntity> entities = List.of(

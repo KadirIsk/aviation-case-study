@@ -6,7 +6,7 @@ import com.aviation.routing.flight.path.engine.application.dto.CreateTransportat
 import com.aviation.routing.flight.path.engine.application.dto.UpdateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.exception.DuplicateResourceException;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
-import com.aviation.routing.flight.path.engine.common.ErrorCode;
+import com.aviation.routing.flight.path.engine.common.exception.ErrorCode;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.domain.port.TransportationPersistencePort;
 import lombok.RequiredArgsConstructor;

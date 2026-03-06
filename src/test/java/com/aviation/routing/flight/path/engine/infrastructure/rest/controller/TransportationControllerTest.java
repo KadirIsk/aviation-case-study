@@ -16,7 +16,7 @@ import java.util.List;
 import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.dto.UpdateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
-import com.aviation.routing.flight.path.engine.common.GlobalExceptionHandler;
+import com.aviation.routing.flight.path.engine.common.exception.GlobalExceptionHandler;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

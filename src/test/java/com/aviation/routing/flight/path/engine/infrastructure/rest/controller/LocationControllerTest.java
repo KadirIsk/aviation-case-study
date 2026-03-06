@@ -14,9 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.LocationFilterRequest;
 import com.aviation.routing.flight.path.engine.application.dto.UpdateLocationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
-import com.aviation.routing.flight.path.engine.common.GlobalExceptionHandler;
+import com.aviation.routing.flight.path.engine.common.exception.GlobalExceptionHandler;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -139,7 +141,7 @@ class LocationControllerTest {
             2
         );
 
-        when(locationService.getLocations(any(CreateLocationUseCase.class), any(org.springframework.data.domain.Pageable.class)))
+        when(locationService.getLocations(any(LocationFilterRequest.class), any(Pageable.class)))
             .thenReturn(page);
 
         mockMvc.perform(get("/api/v1/locations")
@@ -152,7 +154,7 @@ class LocationControllerTest {
             .andExpect(jsonPath("$.content[0].id").value(1))
             .andExpect(jsonPath("$.content[0].locationCode").value("AAA"));
 
-        verify(locationService).getLocations(any(CreateLocationUseCase.class), any(org.springframework.data.domain.Pageable.class));
+        verify(locationService).getLocations(any(LocationFilterRequest.class), any(Pageable.class));
     }
 
     @Test

@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.exception.DuplicateResourceException;
-import com.aviation.routing.flight.path.engine.common.ErrorCode;
+import com.aviation.routing.flight.path.engine.common.exception.ErrorCode;
 import com.aviation.routing.flight.path.engine.domain.model.EventType;
 import com.aviation.routing.flight.path.engine.domain.model.GraphSyncEvent;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
@@ -78,6 +78,13 @@ public class TransportationPersistenceAdapter implements TransportationPersisten
     public void delete(Long id) {
         Optional<TransportationEntity> entityOptional = jpaRepository.findById(id);
         entityOptional.ifPresent(this::deleteTransportationAndBroadcast);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByLocationId(Long id) {
+        jpaRepository.deleteByOriginLocationEntityId(id);
+        jpaRepository.deleteByDestinationLocationEntityId(id);
     }
 
     private void deleteTransportationAndBroadcast(TransportationEntity entity) {

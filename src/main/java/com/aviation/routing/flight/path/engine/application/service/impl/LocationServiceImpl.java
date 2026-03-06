@@ -1,12 +1,14 @@
 package com.aviation.routing.flight.path.engine.application.service.impl;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.LocationFilterRequest;
 import com.aviation.routing.flight.path.engine.application.dto.UpdateLocationUseCase;
 import com.aviation.routing.flight.path.engine.application.exception.DuplicateResourceException;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
-import com.aviation.routing.flight.path.engine.common.ErrorCode;
+import com.aviation.routing.flight.path.engine.common.exception.ErrorCode;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.port.LocationPersistencePort;
+import com.aviation.routing.flight.path.engine.domain.port.TransportationPersistencePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LocationServiceImpl implements LocationService {
     private final LocationPersistencePort locationPersistencePort;
+    private final TransportationPersistencePort transportationPersistencePort;
 
     @Transactional
     @Override
@@ -54,14 +57,15 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    @Transactional
     public void deleteLocation(Long id) {
-        // todo: burada transportation's kayitlari da guncellenmeli
         locationPersistencePort.deleteById(id);
+        transportationPersistencePort.deleteByLocationId(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Location> getLocations(CreateLocationUseCase filter, Pageable pageable) {
+    public Page<Location> getLocations(LocationFilterRequest filter, Pageable pageable) {
         return locationPersistencePort.findAll(filter, pageable);
     }
 }

@@ -13,6 +13,7 @@ public interface TransportationPersistencePort {
     Transportation get(Long id);
     List<Transportation> getByOriginLocationId(Long originLocationId);
     void delete(Long id);
+    void deleteByLocationId(Long id);
     Transportation update(Transportation transportation);
     Page<Transportation> getTransportations(CreateTransportationUseCase filter, Pageable pageable);
     Slice<Transportation> findAllByOrderByOriginLocationId(Pageable pageable);

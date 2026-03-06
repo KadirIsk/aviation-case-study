@@ -1,4 +1,4 @@
-package com.aviation.routing.flight.path.engine.common;
+package com.aviation.routing.flight.path.engine.common.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

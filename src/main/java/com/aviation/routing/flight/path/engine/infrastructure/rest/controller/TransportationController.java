@@ -2,7 +2,8 @@ package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
-import com.aviation.routing.flight.path.engine.common.ApiResponse;
+import com.aviation.routing.flight.path.engine.common.payload.ApiResponse;
+import com.aviation.routing.flight.path.engine.common.payload.PageData;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateTransportationRequest;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateTransportationRequest;
@@ -49,14 +50,17 @@ public class TransportationController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // todo: page'i komple donme
     @Operation(
         summary = "Get filtered transportations",
         description = "Returns a paginated list of transportations based on filters"
     )
     @GetMapping
-    public Page<Transportation> getAll(CreateTransportationUseCase request, Pageable pageable) {
-        return transportationService.getTransportations(request, pageable);
+    public ResponseEntity<ApiResponse<PageData<Transportation>>> getAll(CreateTransportationUseCase request, Pageable pageable) {
+        Page<Transportation> transportations = transportationService.getTransportations(request, pageable);
+
+        PageData<Transportation> pageData = PageData.from(transportations);
+
+        return ResponseEntity.ok(ApiResponse.success(pageData, "Transportations retrieved successfully"));
     }
 
     @PutMapping("/{id}")

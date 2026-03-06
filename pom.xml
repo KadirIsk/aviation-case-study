@@ -19,7 +19,6 @@
 		<java.version>21</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<redisson-spring-boot-starter.version>3.27.2</redisson-spring-boot-starter.version>
-		<liquibase-core.version>4.23.2</liquibase-core.version>
 		<springdoc-ui.version>2.5.0</springdoc-ui.version>
 	</properties>
 
@@ -42,7 +41,6 @@
 <!--		</dependency>-->
 
 		<!-- Redisson -->
-<!--		todo: buna bir bak, uyumlu mu 3.2.5 ile-->
 		<dependency>
 			<groupId>org.redisson</groupId>
 			<artifactId>redisson-spring-boot-starter</artifactId>
@@ -67,11 +65,9 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!--		todo: buna bir bak, uyumlu mu 3.2.5 ile-->
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>${liquibase-core.version}</version>
 		</dependency>
 
 		<!-- Lombok -->

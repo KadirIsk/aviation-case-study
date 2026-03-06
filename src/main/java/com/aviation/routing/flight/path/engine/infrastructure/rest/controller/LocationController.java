@@ -1,8 +1,9 @@
 package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
-import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.LocationFilterRequest;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
-import com.aviation.routing.flight.path.engine.common.ApiResponse;
+import com.aviation.routing.flight.path.engine.common.payload.ApiResponse;
+import com.aviation.routing.flight.path.engine.common.payload.PageData;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateLocationRequest;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateLocationRequest;
@@ -49,11 +50,14 @@ public class LocationController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // todo: page'i komple donme
     @Operation(summary = "Get filtered locations", description = "Returns a paginated list of locations based on filters")
     @GetMapping
-    public Page<Location> getAll(CreateLocationUseCase request, Pageable pageable) {
-        return locationService.getLocations(request, pageable);
+    public ResponseEntity<ApiResponse<PageData<Location>>> getAll(LocationFilterRequest filterRequest, Pageable pageable) {
+        Page<Location> locationPage = locationService.getLocations(filterRequest, pageable);
+
+        PageData<Location> pageData = PageData.from(locationPage);
+
+        return ResponseEntity.ok(ApiResponse.success(pageData, "Locations retrieved successfully"));
     }
 
     @PutMapping("/{id}")

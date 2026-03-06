@@ -19,7 +19,6 @@ public class GraphStateSyncListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleGraphSyncAfterCommit(GraphSyncEvent event) {
         try {
-            // todo: burada lock almak gerekir mi dusun!
             if (EventType.SAVE.equals(event.eventType())) {
                 redissonClient.getMap("node:edges:" + event.originId())
                               .put(event.destinationId(), event.value());

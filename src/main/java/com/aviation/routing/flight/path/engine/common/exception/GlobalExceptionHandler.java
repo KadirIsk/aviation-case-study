@@ -1,7 +1,8 @@
-package com.aviation.routing.flight.path.engine.common;
+package com.aviation.routing.flight.path.engine.common.exception;
 
 import java.util.stream.Collectors;
 
+import com.aviation.routing.flight.path.engine.common.payload.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
