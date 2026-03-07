@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiResponse<Void>> handleBaseException(BaseException e) {
-        log.error("Business exception occurred: Code: {}, Message: {}", e.getCode().name(), e.getMessage());
+        log.error("Business exception occurred: Code: {}, Message: {}", e.getCode().name(), e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(e.getCode().name(), e.getMessage()));
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
-        log.warn("Validation failed: {}", details);
+        log.warn("Validation failed: {}", details, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(ErrorCode.SYS_VAL_001.name(), details));

@@ -1,20 +1,23 @@
 package com.aviation.routing.flight.path.engine.infrastructure.rest.dto;
 
+import java.time.DayOfWeek;
+import java.util.Set;
+
 import com.aviation.routing.flight.path.engine.application.dto.UpdateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.common.util.DayOfWeekBitmaskMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 
 @Builder
 public record UpdateTransportationRequest(
     @Schema(description = "Operating days of the transportation", example = "Monday, Tuesday")
-    @NotNull @Positive Short operatingDays // todo: belki string olarak alinip, short'a cevrilebilir
+    @NotNull Set<DayOfWeek> operatingDays
 ) {
     public UpdateTransportationUseCase toUseCase(Long id) {
         return new UpdateTransportationUseCase(
             id,
-            this.operatingDays()
+            DayOfWeekBitmaskMapper.toBitmask(this.operatingDays())
         );
     }
 }

@@ -3,7 +3,7 @@ package com.aviation.routing.flight.path.engine.infrastructure.adapter;
 import java.util.List;
 import java.util.Optional;
 
-import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.TransportationFilterRequest;
 import com.aviation.routing.flight.path.engine.application.exception.DuplicateResourceException;
 import com.aviation.routing.flight.path.engine.common.exception.ErrorCode;
 import com.aviation.routing.flight.path.engine.domain.model.EventType;
@@ -124,7 +124,7 @@ public class TransportationPersistenceAdapter implements TransportationPersisten
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Transportation> getTransportations(CreateTransportationUseCase filter, Pageable pageable) {
+    public Page<Transportation> getTransportations(TransportationFilterRequest filter, Pageable pageable) {
         var spec = TransportationSpecifications.withFilters(filter);
 
         Page<TransportationEntity> entityPage = jpaRepository.findAll(spec, pageable);

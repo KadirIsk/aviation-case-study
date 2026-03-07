@@ -1,6 +1,6 @@
 package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
-import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.TransportationFilterRequest;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.common.payload.ApiResponse;
 import com.aviation.routing.flight.path.engine.common.payload.PageData;
@@ -55,7 +55,9 @@ public class TransportationController {
         description = "Returns a paginated list of transportations based on filters"
     )
     @GetMapping
-    public ResponseEntity<ApiResponse<PageData<Transportation>>> getAll(CreateTransportationUseCase request, Pageable pageable) {
+    public ResponseEntity<ApiResponse<PageData<Transportation>>> getAll(
+        TransportationFilterRequest request,
+        Pageable pageable) {
         Page<Transportation> transportations = transportationService.getTransportations(request, pageable);
 
         PageData<Transportation> pageData = PageData.from(transportations);

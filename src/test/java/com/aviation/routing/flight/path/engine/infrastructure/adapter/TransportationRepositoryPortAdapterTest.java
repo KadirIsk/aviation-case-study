@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
-import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.TransportationFilterRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.repository.JpaTransportationRepository;
@@ -144,7 +144,7 @@ class TransportationRepositoryPortAdapterTest {
 
     @Test
     void findAll_mapsAllEntitiesToDomain() {
-        CreateTransportationUseCase filter = CreateTransportationUseCase.builder().build();
+        TransportationFilterRequest filter = TransportationFilterRequest.builder().build();
         Pageable pageable = PageRequest.of(0, 10);
 
         List<TransportationEntity> entities = List.of(

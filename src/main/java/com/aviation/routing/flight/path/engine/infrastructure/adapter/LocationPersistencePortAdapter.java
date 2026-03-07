@@ -5,7 +5,6 @@ import java.util.Optional;
 import com.aviation.routing.flight.path.engine.application.dto.LocationFilterRequest;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.port.LocationPersistencePort;
-import com.aviation.routing.flight.path.engine.domain.port.TransportationPersistencePort;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.mapper.LocationMapper;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.repository.JpaLocationRepository;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LocationPersistencePortAdapter implements LocationPersistencePort {
     private final JpaLocationRepository jpaRepository;
-    private final TransportationPersistencePort transportationPersistencePort;
 
     @Override
     public Location save(Location location) {

@@ -3,6 +3,7 @@ package com.aviation.routing.flight.path.engine.application.service.impl;
 import java.util.List;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.TransportationFilterRequest;
 import com.aviation.routing.flight.path.engine.application.dto.UpdateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.exception.DuplicateResourceException;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
@@ -50,6 +51,7 @@ public class TransportationServiceImpl implements TransportationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Transportation> getByOriginLocationId(Long originLocationId) {
         return persistencePort.getByOriginLocationId(originLocationId);
     }
@@ -71,7 +73,7 @@ public class TransportationServiceImpl implements TransportationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Transportation> getTransportations(CreateTransportationUseCase filter, Pageable pageable) {
+    public Page<Transportation> getTransportations(TransportationFilterRequest filter, Pageable pageable) {
         return persistencePort.getTransportations(filter, pageable);
     }
 

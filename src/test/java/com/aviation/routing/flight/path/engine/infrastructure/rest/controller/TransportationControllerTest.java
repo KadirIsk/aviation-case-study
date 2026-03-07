@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.TransportationFilterRequest;
 import com.aviation.routing.flight.path.engine.application.dto.UpdateTransportationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.TransportationService;
 import com.aviation.routing.flight.path.engine.common.exception.GlobalExceptionHandler;
@@ -142,7 +143,7 @@ class TransportationControllerTest {
         );
 
         when(transportationService.getTransportations(
-            any(CreateTransportationUseCase.class),
+            any(TransportationFilterRequest.class),
             any(org.springframework.data.domain.Pageable.class)
         ))
             .thenReturn(page);
@@ -158,7 +159,7 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.content[0].transportationType").value("FLIGHT"));
 
         verify(transportationService).getTransportations(
-            any(CreateTransportationUseCase.class),
+            any(TransportationFilterRequest.class),
             any(org.springframework.data.domain.Pageable.class)
         );
     }

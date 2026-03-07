@@ -1,6 +1,10 @@
 package com.aviation.routing.flight.path.engine.infrastructure.rest.dto;
 
+import java.time.DayOfWeek;
+import java.util.Set;
+
 import com.aviation.routing.flight.path.engine.application.dto.CreateTransportationUseCase;
+import com.aviation.routing.flight.path.engine.common.util.DayOfWeekBitmaskMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,14 +20,14 @@ public record CreateTransportationRequest(
     @Schema(description = "Type of the transportation", example = "FLIGHT, BUS, SUBWAY, UBER")
     @NotBlank String transportationType,
     @Schema(description = "Operating days of the transportation", example = "Monday, Tuesday")
-    Short operatingDays // todo: belki string olarak alinip, short'a cevrilebilir
+    Set<DayOfWeek> operatingDays
 ) {
     public CreateTransportationUseCase toUseCase() {
         return new CreateTransportationUseCase(
             this.originLocationId(),
             this.destinationLocationId(),
             this.transportationType(),
-            this.operatingDays()
+            DayOfWeekBitmaskMapper.toBitmask(this.operatingDays())
         );
     }
 }

@@ -1,9 +1,12 @@
 package com.aviation.routing.flight.path.engine.infrastructure.rest.controller;
 
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Set;
 
 import com.aviation.routing.flight.path.engine.application.port.in.FindFlightRoutesUseCase;
 import com.aviation.routing.flight.path.engine.common.payload.ApiResponse;
+import com.aviation.routing.flight.path.engine.common.util.DayOfWeekBitmaskMapper;
 import com.aviation.routing.flight.path.engine.domain.model.route.finder.RouteResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +26,13 @@ public class RouteController {
     public ResponseEntity<ApiResponse<List<RouteResponse>>> findRoutes(
             @RequestParam("originId") Long originId,
             @RequestParam("destinationId") Long destinationId,
-            @RequestParam("requestedDayMask") short requestedDayMask) { // todo: burasini sonradan gun alacak sekilde update edelim
+            @RequestParam("requestedDayMask") Set<DayOfWeek> operatingDays) {
 
-        List<RouteResponse> routes = findFlightRoutesUseCase.execute(originId, destinationId, requestedDayMask);
+        List<RouteResponse> routes = findFlightRoutesUseCase.execute(
+            originId,
+            destinationId,
+            DayOfWeekBitmaskMapper.toBitmask(operatingDays)
+        );
         
         return ResponseEntity.ok(ApiResponse.success(routes, "Routes retrieved successfully"));
     }
