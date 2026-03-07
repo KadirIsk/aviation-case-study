@@ -6,6 +6,7 @@ import com.aviation.routing.flight.path.engine.common.payload.ApiResponse;
 import com.aviation.routing.flight.path.engine.common.payload.PageData;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateTransportationRequest;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.TransportationResponse;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateTransportationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -40,10 +41,10 @@ public class TransportationController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ApiResponse<Transportation>> create(@Valid @RequestBody CreateTransportationRequest request) {
+    public ResponseEntity<ApiResponse<TransportationResponse>> create(@Valid @RequestBody CreateTransportationRequest request) {
         Transportation transportation = transportationService.create(request.toUseCase());
 
-        ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation created successfully");
+        ApiResponse<TransportationResponse> apiResponse = ApiResponse.success(TransportationResponse.from(transportation), "Transportation created successfully");
 
         return ResponseEntity.ok(apiResponse);
     }
@@ -54,10 +55,10 @@ public class TransportationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Transportation not found")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Transportation>> getById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<TransportationResponse>> getById(@PathVariable Long id) {
         Transportation transportation = transportationService.get(id);
 
-        ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation retrieved successfully");
+        ApiResponse<TransportationResponse> apiResponse = ApiResponse.success(TransportationResponse.from(transportation), "Transportation retrieved successfully");
 
         return ResponseEntity.ok(apiResponse);
     }
@@ -67,12 +68,12 @@ public class TransportationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Transportations retrieved successfully")
     })
     @GetMapping
-    public ResponseEntity<ApiResponse<PageData<Transportation>>> getAll(
+    public ResponseEntity<ApiResponse<PageData<TransportationResponse>>> getAll(
             TransportationFilterRequest request,
             Pageable pageable) {
         Page<Transportation> transportations = transportationService.getTransportations(request, pageable);
 
-        PageData<Transportation> pageData = PageData.from(transportations);
+        PageData<TransportationResponse> pageData = PageData.from(transportations.map(TransportationResponse::from));
 
         return ResponseEntity.ok(ApiResponse.success(pageData, "Transportations retrieved successfully"));
     }
@@ -83,13 +84,13 @@ public class TransportationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Transportation not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Transportation>> update(
+    public ResponseEntity<ApiResponse<TransportationResponse>> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateTransportationRequest request
     ) {
         Transportation transportation = transportationService.update(request.toUseCase(id));
 
-        ApiResponse<Transportation> apiResponse = ApiResponse.success(transportation, "Transportation updated successfully");
+        ApiResponse<TransportationResponse> apiResponse = ApiResponse.success(TransportationResponse.from(transportation), "Transportation updated successfully");
 
         return ResponseEntity.ok(apiResponse);
     }

@@ -6,6 +6,7 @@ import com.aviation.routing.flight.path.engine.common.payload.ApiResponse;
 import com.aviation.routing.flight.path.engine.common.payload.PageData;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateLocationRequest;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.LocationResponse;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateLocationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -40,10 +41,10 @@ public class LocationController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ApiResponse<Location>> create(@Valid @RequestBody CreateLocationRequest request) {
+    public ResponseEntity<ApiResponse<LocationResponse>> create(@Valid @RequestBody CreateLocationRequest request) {
         Location location = locationService.createLocation(request.toUseCase());
 
-        ApiResponse<Location> apiResponse = ApiResponse.success(location, "Location created successfully");
+        ApiResponse<LocationResponse> apiResponse = ApiResponse.success(LocationResponse.from(location), "Location created successfully");
 
         return ResponseEntity.ok(apiResponse);
     }
@@ -54,10 +55,10 @@ public class LocationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Location not found")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Location>> getById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<LocationResponse>> getById(@PathVariable Long id) {
         Location location = locationService.getLocation(id);
 
-        ApiResponse<Location> apiResponse = ApiResponse.success(location, "Location retrieved successfully");
+        ApiResponse<LocationResponse> apiResponse = ApiResponse.success(LocationResponse.from(location), "Location retrieved successfully");
 
         return ResponseEntity.ok(apiResponse);
     }
@@ -67,10 +68,10 @@ public class LocationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Locations retrieved successfully")
     })
     @GetMapping
-    public ResponseEntity<ApiResponse<PageData<Location>>> getAll(LocationFilterRequest filterRequest, Pageable pageable) {
+    public ResponseEntity<ApiResponse<PageData<LocationResponse>>> getAll(LocationFilterRequest filterRequest, Pageable pageable) {
         Page<Location> locationPage = locationService.getLocations(filterRequest, pageable);
 
-        PageData<Location> pageData = PageData.from(locationPage);
+        PageData<LocationResponse> pageData = PageData.from(locationPage.map(LocationResponse::from));
 
         return ResponseEntity.ok(ApiResponse.success(pageData, "Locations retrieved successfully"));
     }
@@ -81,10 +82,10 @@ public class LocationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Location not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Location>> update(@PathVariable Long id, @Valid @RequestBody UpdateLocationRequest request) {
+    public ResponseEntity<ApiResponse<LocationResponse>> update(@PathVariable Long id, @Valid @RequestBody UpdateLocationRequest request) {
         Location location = locationService.updateLocation(request.toUseCase(id));
 
-        ApiResponse<Location> apiResponse = ApiResponse.success(location, "Location updated successfully");
+        ApiResponse<LocationResponse> apiResponse = ApiResponse.success(LocationResponse.from(location), "Location updated successfully");
 
         return ResponseEntity.ok(apiResponse);
     }

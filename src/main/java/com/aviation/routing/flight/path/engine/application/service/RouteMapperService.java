@@ -11,9 +11,7 @@ import com.aviation.routing.flight.path.engine.application.port.in.RouteMapperPo
 import com.aviation.routing.flight.path.engine.application.port.out.LocationProviderPort;
 import com.aviation.routing.flight.path.engine.domain.model.projection.PathEdge;
 import com.aviation.routing.flight.path.engine.domain.model.projection.RouteCandidate;
-import com.aviation.routing.flight.path.engine.domain.model.route.finder.Route;
-import com.aviation.routing.flight.path.engine.domain.model.route.finder.RouteResponse;
-import com.aviation.routing.flight.path.engine.domain.model.route.finder.RouteStep;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.RouteResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -47,7 +45,7 @@ public class RouteMapperService implements RouteMapperPort {
     }
 
     private RouteResponse buildRouteResponse(RouteCandidate candidate, Map<Long, String> locationNames) {
-        List<RouteStep> steps = new ArrayList<>();
+        List<RouteResponse.RouteStepDto> steps = new ArrayList<>();
         String title = "Unknown Route";
 
         boolean titleSet = false;
@@ -62,9 +60,18 @@ public class RouteMapperService implements RouteMapperPort {
                 titleSet = true;
             }
 
-            steps.add(new RouteStep(originName, destName, type));
+            steps.add(RouteResponse.RouteStepDto.builder()
+                .origin(originName)
+                .destination(destName)
+                .transportationType(type)
+                .build());
         }
 
-        return new RouteResponse(new Route(title, steps));
+        return RouteResponse.builder()
+            .route(RouteResponse.RouteDto.builder()
+                .title(title)
+                .steps(steps)
+                .build())
+            .build();
     }
 }
