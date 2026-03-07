@@ -37,18 +37,18 @@ public class LocationEntity {
     private Long id;
 
     @NotBlank(message = "Location name cannot be blank")
-    @Size(max = 255, message = "Location name must be less than 255 characters")
-    @Column(name = "name", unique = true, nullable = false)
+    @Size(max = 150, message = "Location name must be less than 150 characters")
+    @Column(name = "name", unique = true, nullable = false, length = 150)
     private String name;
 
     @NotBlank(message = "Country cannot be blank")
-    @Size(max = 255, message = "Country must be less than 255 characters")
-    @Column(name = "country", nullable = false)
+    @Size(max = 100, message = "Country must be less than 100 characters")
+    @Column(name = "country", nullable = false, length = 100)
     private String country;
 
     @NotBlank(message = "City cannot be blank")
-    @Size(max = 255, message = "City must be less than 255 characters")
-    @Column(name = "city", nullable = false)
+    @Size(max = 100, message = "City must be less than 100 characters")
+    @Column(name = "city", nullable = false, length = 100)
     private String city;
 
     @NotBlank(message = "Location code cannot be blank")

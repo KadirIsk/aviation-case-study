@@ -67,4 +67,5 @@
 	<include file="db.changelog-name_location_code-unique-index.xml" relativeToChangelogFile="true"/>
 	<include file="db.changelog-origin_destination_type-unique-index.xml" relativeToChangelogFile="true"/>
 	<include file="db.changelog-security-schema.xml" relativeToChangelogFile="true"/>
+	<include file="db.changelog-location-length-constraints.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
