@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
-            .body(ApiResponse.error("SYS_DB_CONSTRAINT_001", "Veri bütünlüğü ihlali: Mükerrer veya ilişkisel olarak geçersiz kayıt."));
+            .body(ApiResponse.error(ErrorCode.SYS_DB_CONSTRAINT_001.name(), "Veri bütünlüğü ihlali: Mükerrer veya ilişkisel olarak geçersiz kayıt."));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
         log.warn("Constraint validation failed: {}", details, e);
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(ApiResponse.error("SYS_VAL_001", details));
+            .body(ApiResponse.error(ErrorCode.SYS_VAL_001.name(), details));
     }
 
     @ExceptionHandler(Exception.class)

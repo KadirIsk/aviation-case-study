@@ -8,6 +8,8 @@ import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateLocationRequest;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateLocationRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,10 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/locations")
 @RequiredArgsConstructor
+@Tag(name = "Location Management", description = "APIs for managing locations")
 public class LocationController {
 
     private final LocationService locationService;
 
+    @Operation(summary = "Create a new location", description = "Creates a new location with the given details")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Location created successfully")
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse<Location>> create(@Valid @RequestBody CreateLocationRequest request) {
@@ -41,6 +48,11 @@ public class LocationController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(summary = "Get location by ID", description = "Returns a single location by its ID")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Location retrieved successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Location not found")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Location>> getById(@PathVariable Long id) {
         Location location = locationService.getLocation(id);
@@ -51,6 +63,9 @@ public class LocationController {
     }
 
     @Operation(summary = "Get filtered locations", description = "Returns a paginated list of locations based on filters")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Locations retrieved successfully")
+    })
     @GetMapping
     public ResponseEntity<ApiResponse<PageData<Location>>> getAll(LocationFilterRequest filterRequest, Pageable pageable) {
         Page<Location> locationPage = locationService.getLocations(filterRequest, pageable);
@@ -60,6 +75,11 @@ public class LocationController {
         return ResponseEntity.ok(ApiResponse.success(pageData, "Locations retrieved successfully"));
     }
 
+    @Operation(summary = "Update an existing location", description = "Updates the location with the given ID")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Location updated successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Location not found")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Location>> update(@PathVariable Long id, @Valid @RequestBody UpdateLocationRequest request) {
         Location location = locationService.updateLocation(request.toUseCase(id));
@@ -69,6 +89,11 @@ public class LocationController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(summary = "Delete a location", description = "Deletes the location with the given ID")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "Location deleted successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Location not found")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         locationService.deleteLocation(id);

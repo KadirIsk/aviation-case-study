@@ -17,7 +17,9 @@ public enum ErrorCode {
     RTE_BIZ_003("Transfers before/after flight limit exceeded."),
 
     SYS_VAL_001("Request validation failed."),
-    SYS_ERR_500("An unexpected internal system error occurred.");
+    SYS_ERR_500("An unexpected internal system error occurred."),
+
+    SYS_DB_CONSTRAINT_001("Database constraint violation: Duplicate or invalid relationship detected.");
 
     private final String defaultMessage;
 }

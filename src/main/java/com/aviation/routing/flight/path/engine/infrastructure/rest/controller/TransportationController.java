@@ -8,6 +8,8 @@ import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.CreateTransportationRequest;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.UpdateTransportationRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,10 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/transportations")
 @RequiredArgsConstructor
+@Tag(name = "Transportation Management", description = "APIs for managing transportations")
 public class TransportationController {
 
     private final TransportationService transportationService;
 
+    @Operation(summary = "Create a new transportation", description = "Creates a new transportation with the given details")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Transportation created successfully")
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse<Transportation>> create(@Valid @RequestBody CreateTransportationRequest request) {
@@ -41,6 +48,11 @@ public class TransportationController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(summary = "Get transportation by ID", description = "Returns a single transportation by its ID")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Transportation retrieved successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Transportation not found")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Transportation>> getById(@PathVariable Long id) {
         Transportation transportation = transportationService.get(id);
@@ -50,14 +62,14 @@ public class TransportationController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @Operation(
-        summary = "Get filtered transportations",
-        description = "Returns a paginated list of transportations based on filters"
-    )
+    @Operation(summary = "Get filtered transportations", description = "Returns a paginated list of transportations based on filters")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Transportations retrieved successfully")
+    })
     @GetMapping
     public ResponseEntity<ApiResponse<PageData<Transportation>>> getAll(
-        TransportationFilterRequest request,
-        Pageable pageable) {
+            TransportationFilterRequest request,
+            Pageable pageable) {
         Page<Transportation> transportations = transportationService.getTransportations(request, pageable);
 
         PageData<Transportation> pageData = PageData.from(transportations);
@@ -65,10 +77,15 @@ public class TransportationController {
         return ResponseEntity.ok(ApiResponse.success(pageData, "Transportations retrieved successfully"));
     }
 
+    @Operation(summary = "Update an existing transportation", description = "Updates the transportation with the given ID")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Transportation updated successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Transportation not found")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Transportation>> update(
-        @PathVariable Long id,
-        @Valid @RequestBody UpdateTransportationRequest request
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateTransportationRequest request
     ) {
         Transportation transportation = transportationService.update(request.toUseCase(id));
 
@@ -77,6 +94,11 @@ public class TransportationController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(summary = "Delete a transportation", description = "Deletes the transportation with the given ID")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "Transportation deleted successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Transportation not found")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         transportationService.delete(id);
