@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +25,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final Environment environment;
 
     @Override
     protected void doFilterInternal(
@@ -36,6 +39,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 traceId = UUID.randomUUID().toString();
             }
             MDC.put("traceId", traceId);
+
+            if (environment.acceptsProfiles(Profiles.of("local"))) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             final String authHeader = request.getHeader("Authorization");
             final String jwt;

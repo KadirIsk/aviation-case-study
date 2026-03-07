@@ -33,10 +33,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 @Import(GlobalExceptionHandler.class)
-@WebMvcTest(controllers = LocationController.class, properties = "spring.security.enabled=false")
+@WebMvcTest(controllers = LocationController.class)
+@ActiveProfiles("local")
 @WithMockUser(roles = "ADMIN")
 class LocationControllerTest {
 

@@ -28,10 +28,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 @Import(GlobalExceptionHandler.class)
-@WebMvcTest(controllers = TransportationController.class, properties = "spring.security.enabled=false")
+@WebMvcTest(controllers = TransportationController.class)
+@ActiveProfiles("local")
 @org.springframework.security.test.context.support.WithMockUser(roles = "ADMIN")
 class TransportationControllerTest {
 
