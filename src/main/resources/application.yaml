@@ -1,6 +1,10 @@
-server.port: 8899
+server:
+  port: 8899
+  shutdown: graceful
 
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   application.name: flight-path-engine
   profiles.active: local
 
