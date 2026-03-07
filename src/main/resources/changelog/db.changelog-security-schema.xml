@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd">
+
+    <changeSet id="20260307120000-1" author="kadir">
+        <createSequence sequenceName="users_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="20260307120000-2" author="kadir">
+        <createTable tableName="users">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="users_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260307120000-3" author="kadir">
+        <!-- admin / admin123 (BCrypt) -->
+        <insert tableName="users">
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$10$6x.qq5YGwJONATiNx6znO.RpSbqoRLYwq17HuCdPaSL9G/zhwEywy"/>
+            <column name="role" value="ADMIN"/>
+        </insert>
+        <!-- agency / agency123 (BCrypt) -->
+        <insert tableName="users">
+            <column name="username" value="agency"/>
+            <column name="password" value="$2a$10$1mnFxtMNaXtZyppCqASoge3ykPbNeU72gF2WIut7/ixQ9OqvRPnKq"/>
+            <column name="role" value="AGENCY"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

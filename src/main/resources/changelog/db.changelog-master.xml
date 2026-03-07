@@ -66,4 +66,5 @@
 	<include file="db.changelog-operation_day-bitmask.xml" relativeToChangelogFile="true"/>
 	<include file="db.changelog-name_location_code-unique-index.xml" relativeToChangelogFile="true"/>
 	<include file="db.changelog-origin_destination_type-unique-index.xml" relativeToChangelogFile="true"/>
+	<include file="db.changelog-security-schema.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

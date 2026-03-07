@@ -19,7 +19,11 @@ public enum ErrorCode {
     SYS_VAL_001("Request validation failed."),
     SYS_ERR_500("An unexpected internal system error occurred."),
 
-    SYS_DB_CONSTRAINT_001("Database constraint violation: Duplicate or invalid relationship detected.");
+    SYS_DB_CONSTRAINT_001("Database constraint violation: Duplicate or invalid relationship detected."),
+
+    AUTH_ERR_001("Authentication failed."),
+    AUTH_ERR_002("Access denied."),
+    AUTH_ERR_003("Invalid or expired refresh token.");
 
     private final String defaultMessage;
 }
