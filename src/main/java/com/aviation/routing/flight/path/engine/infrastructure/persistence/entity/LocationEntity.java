@@ -1,5 +1,6 @@
 package com.aviation.routing.flight.path.engine.infrastructure.persistence.entity;
 
+import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.base.AuditableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,11 +12,11 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
+import lombok.experimental.SuperBuilder;
 
 @FieldNameConstants
 @Entity
@@ -28,8 +29,8 @@ import lombok.experimental.FieldNameConstants;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class LocationEntity {
+@SuperBuilder
+public class LocationEntity extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "locations_seq_gen")
