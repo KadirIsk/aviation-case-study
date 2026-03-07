@@ -17,8 +17,10 @@ import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUse
 import com.aviation.routing.flight.path.engine.application.dto.LocationFilterRequest;
 import com.aviation.routing.flight.path.engine.application.dto.UpdateLocationUseCase;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
+import com.aviation.routing.flight.path.engine.common.exception.ErrorCode;
 import com.aviation.routing.flight.path.engine.common.exception.GlobalExceptionHandler;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
+import com.aviation.routing.flight.path.engine.infrastructure.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,10 +31,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @Import(GlobalExceptionHandler.class)
-@WebMvcTest(LocationController.class)
+@WebMvcTest(controllers = LocationController.class, properties = "spring.security.enabled=false")
+@WithMockUser(roles = "ADMIN")
 class LocationControllerTest {
 
     @Autowired
@@ -40,6 +45,12 @@ class LocationControllerTest {
 
     @MockBean
     private LocationService locationService;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @Test
     void create_returns200_andStandardResponseBody() throws Exception {
@@ -54,6 +65,7 @@ class LocationControllerTest {
         when(locationService.createLocation(any(CreateLocationUseCase.class))).thenReturn(saved);
 
         mockMvc.perform(post("/api/v1/locations")
+                            .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                          {
@@ -78,6 +90,7 @@ class LocationControllerTest {
     @Test
     void create_whenInvalid_returns400_andStandardErrorResponse() throws Exception {
         mockMvc.perform(post("/api/v1/locations")
+                            .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                          {
@@ -89,9 +102,9 @@ class LocationControllerTest {
                                          """))
             .andExpect(status().isBadRequest())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
-            .andExpect(jsonPath("$.message").value("Validation failed"))
-            .andExpect(jsonPath("$.data").isArray());
+            .andExpect(jsonPath("$.code").value("SYS_VAL_001"))
+            .andExpect(jsonPath("$.message").value("name: must not be blank"))
+            .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
@@ -117,12 +130,13 @@ class LocationControllerTest {
 
     @Test
     void getById_whenServiceThrowsRuntimeException_returns404_andStandardErrorResponse() throws Exception {
-        when(locationService.getLocation(404L)).thenThrow(new RuntimeException("Location not found"));
+        when(locationService.getLocation(404L)).thenThrow(new com.aviation.routing.flight.path.engine.application.exception.ResourceNotFoundException(
+            ErrorCode.LOC_NF_001, "Location not found"));
 
         mockMvc.perform(get("/api/v1/locations/{id}", 404L))
-            .andExpect(status().isNotFound())
+            .andExpect(status().isBadRequest())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.code").value("NOT_FOUND"))
+            .andExpect(jsonPath("$.code").value("LOC_NF_001"))
             .andExpect(jsonPath("$.message").value("Location not found"));
 
         verify(locationService).getLocation(404L);
@@ -149,10 +163,10 @@ class LocationControllerTest {
                             .param("size", "10")
                             .param("name", "A"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content").isArray())
-            .andExpect(jsonPath("$.content.length()").value(2))
-            .andExpect(jsonPath("$.content[0].id").value(1))
-            .andExpect(jsonPath("$.content[0].locationCode").value("AAA"));
+            .andExpect(jsonPath("$.data.content").isArray())
+            .andExpect(jsonPath("$.data.content.length()").value(2))
+            .andExpect(jsonPath("$.data.content[0].id").value(1))
+            .andExpect(jsonPath("$.data.content[0].locationCode").value("AAA"));
 
         verify(locationService).getLocations(any(LocationFilterRequest.class), any(Pageable.class));
     }
@@ -170,6 +184,7 @@ class LocationControllerTest {
         when(locationService.updateLocation(any(UpdateLocationUseCase.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/locations/{id}", 7L)
+                            .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                          {
@@ -189,7 +204,8 @@ class LocationControllerTest {
 
     @Test
     void delete_returns204() throws Exception {
-        mockMvc.perform(delete("/api/v1/locations/{id}", 9L))
+        mockMvc.perform(delete("/api/v1/locations/{id}", 9L)
+                            .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
             .andExpect(status().isNoContent());
 
         verify(locationService).deleteLocation(9L);

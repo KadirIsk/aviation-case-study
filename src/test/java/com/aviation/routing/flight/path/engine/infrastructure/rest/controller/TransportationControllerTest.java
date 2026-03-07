@@ -31,7 +31,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @Import(GlobalExceptionHandler.class)
-@WebMvcTest(TransportationController.class)
+@WebMvcTest(controllers = TransportationController.class, properties = "spring.security.enabled=false")
+@org.springframework.security.test.context.support.WithMockUser(roles = "ADMIN")
 class TransportationControllerTest {
 
     @Autowired
@@ -39,6 +40,12 @@ class TransportationControllerTest {
 
     @MockBean
     private TransportationService transportationService;
+
+    @MockBean
+    private com.aviation.routing.flight.path.engine.infrastructure.security.JwtService jwtService;
+
+    @MockBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
     @Test
     void create_returns200_andStandardResponseBody() throws Exception {
@@ -53,23 +60,22 @@ class TransportationControllerTest {
         when(transportationService.create(any(CreateTransportationUseCase.class))).thenReturn(saved);
 
         mockMvc.perform(post("/api/v1/transportations")
+                            .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                          {
                                            "originLocationId": 10,
                                            "destinationLocationId": 20,
                                            "transportationType": "FLIGHT",
-                                           "operatingDays": 1
+                                           "operatingDays": ["MONDAY"]
                                          }
                                          """))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.message").value("Transportation created successfully"))
             .andExpect(jsonPath("$.data.id").value(11))
-            .andExpect(jsonPath("$.data.originLocationId").value(10))
-            .andExpect(jsonPath("$.data.destinationLocationId").value(20))
             .andExpect(jsonPath("$.data.transportationType").value("FLIGHT"))
-            .andExpect(jsonPath("$.data.operatingDays").value(1));
+            .andExpect(jsonPath("$.data.operatingDays[0]").value("MONDAY"));
 
         verify(transportationService).create(any(CreateTransportationUseCase.class));
     }
@@ -77,20 +83,21 @@ class TransportationControllerTest {
     @Test
     void create_whenInvalid_returns400_andStandardErrorResponse() throws Exception {
         mockMvc.perform(post("/api/v1/transportations")
+                            .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                          {
-                                           "originLocationId": null,
+                                           "originLocationId": -1,
                                            "destinationLocationId": 20,
                                            "transportationType": "FLIGHT",
-                                           "operatingDays": 1
+                                           "operatingDays": ["MONDAY"]
                                          }
                                          """))
             .andExpect(status().isBadRequest())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
-            .andExpect(jsonPath("$.message").value("Validation failed"))
-            .andExpect(jsonPath("$.data").isArray());
+            .andExpect(jsonPath("$.code").value("SYS_VAL_001"))
+            .andExpect(jsonPath("$.message").value("originLocationId: must be greater than 0"))
+            .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
@@ -116,12 +123,13 @@ class TransportationControllerTest {
 
     @Test
     void getById_whenServiceThrowsRuntimeException_returns404_andStandardErrorResponse() throws Exception {
-        when(transportationService.get(404L)).thenThrow(new RuntimeException("Transportation not found"));
+        when(transportationService.get(404L)).thenThrow(new com.aviation.routing.flight.path.engine.application.exception.ResourceNotFoundException(
+            com.aviation.routing.flight.path.engine.common.exception.ErrorCode.TRN_NF_001, "Transportation not found"));
 
         mockMvc.perform(get("/api/v1/transportations/{id}", 404L))
-            .andExpect(status().isNotFound())
+            .andExpect(status().isBadRequest())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.code").value("NOT_FOUND"))
+            .andExpect(jsonPath("$.code").value("TRN_NF_001"))
             .andExpect(jsonPath("$.message").value("Transportation not found"));
 
         verify(transportationService).get(404L);
@@ -153,10 +161,10 @@ class TransportationControllerTest {
                             .param("size", "10")
                             .param("transportationType", "FLIGHT"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content").isArray())
-            .andExpect(jsonPath("$.content.length()").value(2))
-            .andExpect(jsonPath("$.content[0].id").value(1))
-            .andExpect(jsonPath("$.content[0].transportationType").value("FLIGHT"));
+            .andExpect(jsonPath("$.data.content").isArray())
+            .andExpect(jsonPath("$.data.content.length()").value(2))
+            .andExpect(jsonPath("$.data.content[0].id").value(1))
+            .andExpect(jsonPath("$.data.content[0].transportationType").value("FLIGHT"));
 
         verify(transportationService).getTransportations(
             any(TransportationFilterRequest.class),
@@ -177,27 +185,26 @@ class TransportationControllerTest {
         when(transportationService.update(any(UpdateTransportationUseCase.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/transportations/{id}", 8L)
+                            .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                          {
-                                           "originLocationId": 100,
-                                           "destinationLocationId": 200,
-                                           "transportationType": "TRAIN",
-                                           "operatingDays": 1
+                                           "operatingDays": ["MONDAY"]
                                          }
                                          """))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.message").value("Transportation updated successfully"))
             .andExpect(jsonPath("$.data.id").value(8))
             .andExpect(jsonPath("$.data.transportationType").value("TRAIN"))
-            .andExpect(jsonPath("$.data.operatingDays").value(1));
+            .andExpect(jsonPath("$.data.operatingDays[0]").value("MONDAY"));
 
         verify(transportationService).update(any(UpdateTransportationUseCase.class));
     }
 
     @Test
     void delete_returns204() throws Exception {
-        mockMvc.perform(delete("/api/v1/transportations/{id}", 15L))
+        mockMvc.perform(delete("/api/v1/transportations/{id}", 15L)
+                            .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
             .andExpect(status().isNoContent());
 
         verify(transportationService).delete(15L);

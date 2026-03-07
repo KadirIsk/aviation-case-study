@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!--  ==================================== ================================== -->
+    <!-- PROPERTIES: Automatically loaded from application properties          -->
+    <!--  ==================================== ================================== -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="flight-path-engine"/>
+    <springProperty scope="context" name="SPRING_PROFILE" source="spring.profiles.active" defaultValue="dev"/>
+
+    <!--  ==================================== ================================== -->
+    <!-- CONSOLE APPENDER: JSON FORMAT (For prod, stage, sandbox)              -->
+    <!--  ==================================== ================================== -->
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <!-- Timestamp in UTC -->
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                    <fieldName>timestamp</fieldName>
+                </timestamp>
+
+                <!-- Log level -->
+                <logLevel>
+                    <fieldName>level</fieldName>
+                </logLevel>
+
+                <!-- Service name (from spring.application.name) -->
+                <pattern>
+                    <pattern>
+                        {
+                            "service": "${APP_NAME}",
+                            "environment": "${SPRING_PROFILE}"
+                        }
+                    </pattern>
+                </pattern>
+
+                <!-- Thread name -->
+                <threadName>
+                    <fieldName>thread</fieldName>
+                </threadName>
+
+                <!-- Logger name -->
+                <loggerName>
+                    <fieldName>logger</fieldName>
+                </loggerName>
+
+                <!-- Log message -->
+                <message>
+                    <fieldName>message</fieldName>
+                </message>
+
+                <!-- MDC fields (traceId, userId, requestId, correlationId, etc.) -->
+                <mdc/>
+
+                <!-- Exception stack trace (if present) -->
+                <stackTrace>
+                    <fieldName>exception</fieldName>
+                </stackTrace>
+
+                <!-- Additional context fields -->
+                <arguments/>
+                <callerData/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!--  ==================================== ================================== -->
+    <!-- CONSOLE APPENDER: PLAIN TEXT FORMAT (For local/dev only)              -->
+    <!--  ==================================== ================================== -->
+    <appender name="CONSOLE_PLAIN" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId:-}] [%X{userId:-}] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--  ==================================== ================================== -->
+    <!-- PROFILES CONFIGURATION                                                -->
+    <!--  ==================================== ================================== -->
+    <springProfile name="local,dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_PLAIN"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="test,prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_JSON"/>
+        </root>
+    </springProfile>
+
+</configuration>
