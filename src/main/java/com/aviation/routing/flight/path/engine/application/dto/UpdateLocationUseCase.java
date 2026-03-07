@@ -5,5 +5,7 @@ import lombok.Builder;
 @Builder
 public record UpdateLocationUseCase(
     Long id,
-    String name
+    String name,
+    String country,
+    String city
 ) { }

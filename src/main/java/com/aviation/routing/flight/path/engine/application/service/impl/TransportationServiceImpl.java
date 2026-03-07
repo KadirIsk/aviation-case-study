@@ -68,12 +68,12 @@ public class TransportationServiceImpl implements TransportationService {
             .operatingDays(request.operatingDays())
             .build();
 
-        return persistencePort.save(transportation);
+        return persistencePort.update(transportation);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Transportation> getTransportations(TransportationFilterRequest filter, Pageable pageable) {
+    public Page<Transportation> get(TransportationFilterRequest filter, Pageable pageable) {
         return persistencePort.getTransportations(filter, pageable);
     }
 

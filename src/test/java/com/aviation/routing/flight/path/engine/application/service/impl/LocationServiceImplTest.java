@@ -11,8 +11,10 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUseCase;
+import com.aviation.routing.flight.path.engine.application.dto.UpdateLocationUseCase;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.port.LocationPersistencePort;
+import com.aviation.routing.flight.path.engine.domain.port.TransportationPersistencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,11 +28,14 @@ class LocationServiceImplTest {
     @Mock
     private LocationPersistencePort locationPersistencePort;
 
+    @Mock
+    private TransportationPersistencePort transportationPersistencePort;
+
     @InjectMocks
     private LocationServiceImpl service;
 
     @Test
-    void createLocation_buildsDomainFromRequest_andSaves() {
+    void create_buildsDomainFromRequest_andSaves() {
         CreateLocationUseCase request = CreateLocationUseCase.builder()
             .name("Sabiha")
             .country("TR")
@@ -48,7 +53,7 @@ class LocationServiceImplTest {
 
         when(locationPersistencePort.save(any(Location.class))).thenReturn(savedFromRepo);
 
-        Location result = service.createLocation(request);
+        Location result = service.create(request);
 
         ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
         verify(locationPersistencePort).save(captor.capture());
@@ -65,30 +70,66 @@ class LocationServiceImplTest {
     }
 
     @Test
-    void getLocation_whenFound_returnsLocation() {
+    void getLocation_whenFound_returns() {
         Location loc = Location.builder().id(5L).name("A").country("TR").city("X").locationCode("AAA").build();
         when(locationPersistencePort.findById(5L)).thenReturn(Optional.of(loc));
 
-        Location result = service.getLocation(5L);
+        Location result = service.get(5L);
 
         assertEquals(5L, result.getId());
         verify(locationPersistencePort).findById(5L);
     }
 
     @Test
-    void getLocation_whenNotFound_throwsRuntimeException() {
+    void get_whenNotFound_throwsRuntimeException() {
         when(locationPersistencePort.findById(99L)).thenReturn(Optional.empty());
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> service.getLocation(99L));
-        assertEquals("Location not found", ex.getMessage());
+        assertThrows(RuntimeException.class, () -> service.get(99L));
         verify(locationPersistencePort).findById(99L);
     }
 
     @Test
-    void deleteLocation_delegatesToRepository() {
-        service.deleteLocation(7L);
+    void update_updatesFields_andSaves() {
+        Long id = 5L;
+        Location existing = Location.builder()
+            .id(id)
+            .name("OldName")
+            .country("OldCountry")
+            .city("OldCity")
+            .locationCode("CODE")
+            .build();
+
+        UpdateLocationUseCase request = UpdateLocationUseCase.builder()
+            .id(id)
+            .name("NewName")
+            .country("NewCountry")
+            .city("NewCity")
+            .build();
+
+        when(locationPersistencePort.findById(id)).thenReturn(Optional.of(existing));
+        when(locationPersistencePort.save(any(Location.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Location result = service.update(request);
+
+        verify(locationPersistencePort).findById(id);
+        ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
+        verify(locationPersistencePort).save(captor.capture());
+
+        Location saved = captor.getValue();
+        assertEquals("NewName", saved.getName());
+        assertEquals("NewCountry", saved.getCountry());
+        assertEquals("NewCity", saved.getCity());
+        assertEquals("CODE", saved.getLocationCode());
+
+        assertEquals("NewName", result.getName());
+    }
+
+    @Test
+    void delete_delegatesToRepository() {
+        service.delete(7L);
 
         verify(locationPersistencePort).deleteById(7L);
-        verifyNoMoreInteractions(locationPersistencePort);
+        verify(transportationPersistencePort).deleteByLocationId(7L);
+        verifyNoMoreInteractions(locationPersistencePort, transportationPersistencePort);
     }
 }

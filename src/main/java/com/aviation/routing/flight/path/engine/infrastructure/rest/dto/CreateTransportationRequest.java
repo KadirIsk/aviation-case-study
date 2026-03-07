@@ -19,7 +19,7 @@ public record CreateTransportationRequest(
     @NotNull @Positive Long destinationLocationId,
     @Schema(description = "Type of the transportation", example = "FLIGHT, BUS, SUBWAY, UBER")
     @NotBlank String transportationType,
-    @Schema(description = "Operating days of the transportation", example = "Monday, Tuesday")
+    @Schema(description = "Operating days of the transportation", type = "array", example = "[\"MONDAY\", \"TUESDAY\"]")
     Set<DayOfWeek> operatingDays
 ) {
     public CreateTransportationUseCase toUseCase() {

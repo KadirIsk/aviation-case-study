@@ -71,7 +71,7 @@ public class TransportationController {
     public ResponseEntity<ApiResponse<PageData<TransportationResponse>>> getAll(
             TransportationFilterRequest request,
             Pageable pageable) {
-        Page<Transportation> transportations = transportationService.getTransportations(request, pageable);
+        Page<Transportation> transportations = transportationService.get(request, pageable);
 
         PageData<TransportationResponse> pageData = PageData.from(transportations.map(TransportationResponse::from));
 

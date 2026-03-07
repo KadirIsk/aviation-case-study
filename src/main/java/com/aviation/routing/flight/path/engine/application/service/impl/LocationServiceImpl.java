@@ -4,6 +4,7 @@ import com.aviation.routing.flight.path.engine.application.dto.CreateLocationUse
 import com.aviation.routing.flight.path.engine.application.dto.LocationFilterRequest;
 import com.aviation.routing.flight.path.engine.application.dto.UpdateLocationUseCase;
 import com.aviation.routing.flight.path.engine.application.exception.DuplicateResourceException;
+import com.aviation.routing.flight.path.engine.application.exception.ResourceNotFoundException;
 import com.aviation.routing.flight.path.engine.application.service.LocationService;
 import com.aviation.routing.flight.path.engine.common.exception.ErrorCode;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
@@ -18,13 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class LocationServiceImpl implements LocationService {
-    private final LocationPersistencePort locationPersistencePort;
+    private final LocationPersistencePort persistencePort;
     private final TransportationPersistencePort transportationPersistencePort;
 
     @Transactional
     @Override
-    public Location createLocation(CreateLocationUseCase request) {
-        boolean exists = locationPersistencePort.existsByNameOrLocationCode(request.name(), request.locationCode());
+    public Location create(CreateLocationUseCase request) {
+        boolean exists = persistencePort.existsByNameOrLocationCode(request.name(), request.locationCode());
         if (exists) {
             throw new DuplicateResourceException(ErrorCode.LOC_DUP_001, null);
         }
@@ -36,36 +37,39 @@ public class LocationServiceImpl implements LocationService {
             .locationCode(request.locationCode())
             .build();
 
-        return locationPersistencePort.save(location);
+        return persistencePort.save(location);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Location getLocation(Long id) {
-        return locationPersistencePort.findById(id)
-            .orElseThrow(() -> new DuplicateResourceException(ErrorCode.TRN_DUP_001, null));
+    public Location get(Long id) {
+        return persistencePort.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.TRN_NF_001, null));
     }
 
     @Override
     @Transactional
-    public Location updateLocation(UpdateLocationUseCase request) {
-        Location existing = getLocation(request.id());
+    public Location update(UpdateLocationUseCase request) {
+        Location existing = Location.builder()
+            .id(request.id())
+            .name(request.name())
+            .country(request.country())
+            .city(request.city())
+            .build();
 
-        existing.setName(request.name());
-
-        return locationPersistencePort.save(existing);
+        return persistencePort.update(existing);
     }
 
     @Override
     @Transactional
-    public void deleteLocation(Long id) {
-        locationPersistencePort.deleteById(id);
+    public void delete(Long id) {
+        persistencePort.deleteById(id);
         transportationPersistencePort.deleteByLocationId(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Location> getLocations(LocationFilterRequest filter, Pageable pageable) {
-        return locationPersistencePort.findAll(filter, pageable);
+    public Page<Location> get(LocationFilterRequest filter, Pageable pageable) {
+        return persistencePort.findAll(filter, pageable);
     }
 }

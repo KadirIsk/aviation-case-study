@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface LocationPersistencePort {
     Location save(Location location);
+    Location update(Location location);
     Optional<Location> findById(Long id);
     Page<Location> findAll(LocationFilterRequest filter, Pageable pageable);
     void deleteById(Long id);

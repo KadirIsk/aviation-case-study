@@ -42,7 +42,7 @@ public class LocationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse<LocationResponse>> create(@Valid @RequestBody CreateLocationRequest request) {
-        Location location = locationService.createLocation(request.toUseCase());
+        Location location = locationService.create(request.toUseCase());
 
         ApiResponse<LocationResponse> apiResponse = ApiResponse.success(LocationResponse.from(location), "Location created successfully");
 
@@ -56,7 +56,7 @@ public class LocationController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<LocationResponse>> getById(@PathVariable Long id) {
-        Location location = locationService.getLocation(id);
+        Location location = locationService.get(id);
 
         ApiResponse<LocationResponse> apiResponse = ApiResponse.success(LocationResponse.from(location), "Location retrieved successfully");
 
@@ -69,7 +69,7 @@ public class LocationController {
     })
     @GetMapping
     public ResponseEntity<ApiResponse<PageData<LocationResponse>>> getAll(LocationFilterRequest filterRequest, Pageable pageable) {
-        Page<Location> locationPage = locationService.getLocations(filterRequest, pageable);
+        Page<Location> locationPage = locationService.get(filterRequest, pageable);
 
         PageData<LocationResponse> pageData = PageData.from(locationPage.map(LocationResponse::from));
 
@@ -83,7 +83,7 @@ public class LocationController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<LocationResponse>> update(@PathVariable Long id, @Valid @RequestBody UpdateLocationRequest request) {
-        Location location = locationService.updateLocation(request.toUseCase(id));
+        Location location = locationService.update(request.toUseCase(id));
 
         ApiResponse<LocationResponse> apiResponse = ApiResponse.success(LocationResponse.from(location), "Location updated successfully");
 
@@ -97,7 +97,7 @@ public class LocationController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        locationService.deleteLocation(id);
+        locationService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

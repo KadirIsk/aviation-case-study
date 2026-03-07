@@ -64,7 +64,7 @@ class LocationControllerTest {
             .locationCode("SAW")
             .build();
 
-        when(locationService.createLocation(any(CreateLocationUseCase.class))).thenReturn(saved);
+        when(locationService.create(any(CreateLocationUseCase.class))).thenReturn(saved);
 
         mockMvc.perform(post("/api/v1/locations")
                             .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
@@ -86,7 +86,7 @@ class LocationControllerTest {
             .andExpect(jsonPath("$.data.city").value("Istanbul"))
             .andExpect(jsonPath("$.data.locationCode").value("SAW"));
 
-        verify(locationService).createLocation(any(CreateLocationUseCase.class));
+        verify(locationService).create(any(CreateLocationUseCase.class));
     }
 
     @Test
@@ -111,7 +111,7 @@ class LocationControllerTest {
 
     @Test
     void getById_returns200_andStandardResponseBody() throws Exception {
-        when(locationService.getLocation(5L)).thenReturn(
+        when(locationService.get(5L)).thenReturn(
             Location.builder()
                 .id(5L)
                 .name("Ataturk")
@@ -127,12 +127,12 @@ class LocationControllerTest {
             .andExpect(jsonPath("$.data.id").value(5))
             .andExpect(jsonPath("$.data.locationCode").value("IST"));
 
-        verify(locationService).getLocation(5L);
+        verify(locationService).get(5L);
     }
 
     @Test
     void getById_whenServiceThrowsRuntimeException_returns404_andStandardErrorResponse() throws Exception {
-        when(locationService.getLocation(404L)).thenThrow(new com.aviation.routing.flight.path.engine.application.exception.ResourceNotFoundException(
+        when(locationService.get(404L)).thenThrow(new com.aviation.routing.flight.path.engine.application.exception.ResourceNotFoundException(
             ErrorCode.LOC_NF_001, "Location not found"));
 
         mockMvc.perform(get("/api/v1/locations/{id}", 404L))
@@ -141,7 +141,7 @@ class LocationControllerTest {
             .andExpect(jsonPath("$.code").value("LOC_NF_001"))
             .andExpect(jsonPath("$.message").value("Location not found"));
 
-        verify(locationService).getLocation(404L);
+        verify(locationService).get(404L);
     }
 
     @Test
@@ -157,7 +157,7 @@ class LocationControllerTest {
             2
         );
 
-        when(locationService.getLocations(any(LocationFilterRequest.class), any(Pageable.class)))
+        when(locationService.get(any(LocationFilterRequest.class), any(Pageable.class)))
             .thenReturn(page);
 
         mockMvc.perform(get("/api/v1/locations")
@@ -170,7 +170,7 @@ class LocationControllerTest {
             .andExpect(jsonPath("$.data.content[0].id").value(1))
             .andExpect(jsonPath("$.data.content[0].locationCode").value("AAA"));
 
-        verify(locationService).getLocations(any(LocationFilterRequest.class), any(Pageable.class));
+        verify(locationService).get(any(LocationFilterRequest.class), any(Pageable.class));
     }
 
     @Test
@@ -183,7 +183,7 @@ class LocationControllerTest {
             .locationCode("ESB")
             .build();
 
-        when(locationService.updateLocation(any(UpdateLocationUseCase.class))).thenReturn(updated);
+        when(locationService.update(any(UpdateLocationUseCase.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/locations/{id}", 7L)
                             .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
@@ -201,7 +201,7 @@ class LocationControllerTest {
             .andExpect(jsonPath("$.data.id").value(7))
             .andExpect(jsonPath("$.data.locationCode").value("ESB"));
 
-        verify(locationService).updateLocation(any(UpdateLocationUseCase.class));
+        verify(locationService).update(any(UpdateLocationUseCase.class));
     }
 
     @Test
@@ -210,6 +210,6 @@ class LocationControllerTest {
                             .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
             .andExpect(status().isNoContent());
 
-        verify(locationService).deleteLocation(9L);
+        verify(locationService).delete(9L);
     }
 }

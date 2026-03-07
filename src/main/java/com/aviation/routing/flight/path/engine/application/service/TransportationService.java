@@ -16,6 +16,6 @@ public interface TransportationService {
     List<Transportation> getByOriginLocationId(Long originLocationId);
     void delete(Long id);
     Transportation update(UpdateTransportationUseCase request);
-    Page<Transportation> getTransportations(TransportationFilterRequest filter, Pageable pageable);
+    Page<Transportation> get(TransportationFilterRequest filter, Pageable pageable);
     Slice<Transportation> findAllByOrderByOriginLocationId(Pageable pageable);
 }

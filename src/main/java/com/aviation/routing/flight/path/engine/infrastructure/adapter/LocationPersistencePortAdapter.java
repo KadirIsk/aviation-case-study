@@ -3,6 +3,8 @@ package com.aviation.routing.flight.path.engine.infrastructure.adapter;
 import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.LocationFilterRequest;
+import com.aviation.routing.flight.path.engine.application.exception.ResourceNotFoundException;
+import com.aviation.routing.flight.path.engine.common.exception.ErrorCode;
 import com.aviation.routing.flight.path.engine.domain.model.Location;
 import com.aviation.routing.flight.path.engine.domain.port.LocationPersistencePort;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.LocationEntity;
@@ -24,6 +26,19 @@ public class LocationPersistencePortAdapter implements LocationPersistencePort {
         LocationEntity entity = LocationMapper.toEntity(location);
         entity = jpaRepository.save(entity);
         return LocationMapper.toDomain(entity);
+    }
+
+    @Override
+    public Location update(Location location) {
+        LocationEntity locationEntity = jpaRepository.findById(location.getId())
+            .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.LOC_NF_001, null));
+
+        locationEntity.setName(location.getName());
+        locationEntity.setCountry(location.getCountry());
+        locationEntity.setCity(location.getCity());
+
+        LocationEntity updatedEntity = jpaRepository.save(locationEntity);
+        return LocationMapper.toDomain(updatedEntity);
     }
 
     @Override

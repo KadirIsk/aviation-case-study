@@ -8,9 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface LocationService {
-    Location createLocation(CreateLocationUseCase request);
-    Location getLocation(Long id);
-    Location updateLocation(UpdateLocationUseCase request);
-    void deleteLocation(Long id);
-    Page<Location> getLocations(LocationFilterRequest filter, Pageable pageable);
+    Location create(CreateLocationUseCase request);
+    Location get(Long id);
+    Location update(UpdateLocationUseCase request);
+    void delete(Long id);
+    Page<Location> get(LocationFilterRequest filter, Pageable pageable);
 }

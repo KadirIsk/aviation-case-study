@@ -61,16 +61,19 @@ public class TransportationPersistenceAdapter implements TransportationPersisten
     }
 
     @Override
+    @Transactional
     public Transportation update(Transportation transportation) {
-        // fixme: burada cok fazla mapping islemi yapiliyor, direkt update script'i calistirsak
-        Transportation existing = get(transportation.getId());
+        TransportationEntity existing = jpaRepository.findById(transportation.getId())
+            .orElseThrow(() -> new DuplicateResourceException(ErrorCode.LOC_NF_001, null));
+
         existing.setOperatingDays(transportation.getOperatingDays());
 
-        TransportationEntity entity = jpaRepository.save(TransportationMapper.toEntity(existing));
+        TransportationEntity entity = jpaRepository.save(existing);
 
-        updateGraphAndBroadcast(TransportationMapper.toDomain(entity));
+        Transportation updated = TransportationMapper.toDomain(entity);
+        updateGraphAndBroadcast(updated);
 
-        return existing;
+        return updated;
     }
 
     @Override

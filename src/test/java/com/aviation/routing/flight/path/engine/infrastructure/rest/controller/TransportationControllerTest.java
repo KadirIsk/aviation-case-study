@@ -152,7 +152,7 @@ class TransportationControllerTest {
             2
         );
 
-        when(transportationService.getTransportations(
+        when(transportationService.get(
             any(TransportationFilterRequest.class),
             any(org.springframework.data.domain.Pageable.class)
         ))
@@ -168,7 +168,7 @@ class TransportationControllerTest {
             .andExpect(jsonPath("$.data.content[0].id").value(1))
             .andExpect(jsonPath("$.data.content[0].transportationType").value("FLIGHT"));
 
-        verify(transportationService).getTransportations(
+        verify(transportationService).get(
             any(TransportationFilterRequest.class),
             any(org.springframework.data.domain.Pageable.class)
         );

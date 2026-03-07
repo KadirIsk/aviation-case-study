@@ -8,12 +8,18 @@ import lombok.Builder;
 @Builder
 public record UpdateLocationRequest(
     @Schema(description = "Name of the location", example = "Taksim Meydani")
-    @NotBlank String name
+    @NotBlank String name,
+    @Schema(description = "Country of the location", example = "Turkey")
+    @NotBlank String country,
+    @Schema(description = "City of the location", example = "Istanbul")
+    @NotBlank String city
 ) {
     public UpdateLocationUseCase toUseCase(Long id) {
         return new UpdateLocationUseCase(
             id,
-            this.name()
+            this.name(),
+            this.country(),
+            this.city()
         );
     }
 }
