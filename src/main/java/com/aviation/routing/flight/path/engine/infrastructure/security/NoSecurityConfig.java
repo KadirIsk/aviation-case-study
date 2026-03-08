@@ -3,6 +3,7 @@ package com.aviation.routing.flight.path.engine.infrastructure.security;
 import java.util.Arrays;
 import java.util.Collections;
 
+import com.aviation.routing.flight.path.engine.infrastructure.config.ProfileConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Profile("local")
+@Profile(ProfileConstants.LOCAL)
 public class NoSecurityConfig {
 
     private final UserDetailsService userDetailsService;

@@ -3,6 +3,7 @@ package com.aviation.routing.flight.path.engine.infrastructure.security;
 import java.io.IOException;
 import java.util.UUID;
 
+import com.aviation.routing.flight.path.engine.infrastructure.config.ProfileConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             MDC.put("traceId", traceId);
 
-            if (environment.acceptsProfiles(Profiles.of("local"))) {
+            if (environment.acceptsProfiles(Profiles.of(ProfileConstants.LOCAL))) {
                 filterChain.doFilter(request, response);
                 return;
             }

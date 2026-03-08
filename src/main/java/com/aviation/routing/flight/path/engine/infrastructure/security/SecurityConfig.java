@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.aviation.routing.flight.path.engine.infrastructure.config.ProfileConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +32,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-@Profile("!local")
+@Profile(ProfileConstants.NOT_LOCAL)
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
