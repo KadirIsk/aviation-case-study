@@ -50,9 +50,10 @@ public class TransportationPersistenceAdapter implements TransportationPersisten
 
     private void updateGraphAndBroadcast(Transportation entity) {
         String value = entity.getTransportationType() + ":" + entity.getOperatingDays();
+        String destinationCompositeId = entity.getDestinationLocationId() + ":" + entity.getTransportationType();
         GraphSyncEvent syncEvent = GraphSyncEvent.builder()
             .originId(entity.getOriginLocationId())
-            .destinationId(entity.getDestinationLocationId())
+            .destinationCompositeId(destinationCompositeId)
             .value(value)
             .eventType(EventType.SAVE)
             .build();
@@ -91,9 +92,10 @@ public class TransportationPersistenceAdapter implements TransportationPersisten
     }
 
     private void deleteTransportationAndBroadcast(TransportationEntity entity) {
+        String destinationCompositeId = entity.getDestinationLocationEntityId() + ":" + entity.getTransportationType();
         GraphSyncEvent syncEvent = GraphSyncEvent.builder()
             .originId(entity.getOriginLocationEntityId())
-            .destinationId(entity.getDestinationLocationEntityId())
+            .destinationCompositeId(destinationCompositeId)
             .eventType(EventType.DELETE)
             .build();
 

@@ -12,13 +12,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LocalCacheConfig {
     private static final int MAXIMUM_SIZE = 50_000;
-    private static final int DURATION = 24;
+    private static final int DURATION = 30;
 
     @Bean
     public Cache<Long, Map<String, EdgeInfo>> edgeLocalCache() {
         return Caffeine.newBuilder()
                 .maximumSize(MAXIMUM_SIZE)
-                .expireAfterWrite(DURATION, TimeUnit.HOURS)
+                .expireAfterWrite(DURATION, TimeUnit.SECONDS)
                 .recordStats()
                 .build();
     }

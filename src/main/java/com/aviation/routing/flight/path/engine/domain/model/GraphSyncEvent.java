@@ -5,7 +5,7 @@ import lombok.Builder;
 @Builder
 public record GraphSyncEvent(
     Long originId,
-    Long destinationId,
+    String destinationCompositeId,
     String value,
     EventType eventType
 ) { }

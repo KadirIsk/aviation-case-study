@@ -21,12 +21,12 @@ public class GraphStateSyncListener {
         try {
             if (EventType.SAVE.equals(event.eventType())) {
                 redissonClient.getMap("node:edges:" + event.originId())
-                              .put(event.destinationId(), event.value());
+                              .put(event.destinationCompositeId(), event.value());
             }
 
             if (EventType.DELETE.equals(event.eventType())) {
                 redissonClient.getMap("node:edges:" + event.originId())
-                              .remove(event.destinationId());
+                              .remove(event.destinationCompositeId());
             }
 
             redissonClient.getTopic("graph-invalidation-topic").publish(event.originId());
