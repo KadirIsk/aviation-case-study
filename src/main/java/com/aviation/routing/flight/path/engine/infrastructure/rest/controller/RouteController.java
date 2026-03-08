@@ -38,7 +38,7 @@ public class RouteController {
             @Parameter(description = "ID of the destination location", example = "2")
             @RequestParam("destinationId") Long destinationId,
             @Parameter(description = "Requested operating days")
-            @RequestParam("requestedDayMask") Set<DayOfWeek> operatingDays) {
+            @RequestParam("operatingDays") Set<DayOfWeek> operatingDays) {
 
         List<RouteResponse> routes = findFlightRoutesUseCase.execute(
             originId,

@@ -15,7 +15,7 @@ public class LocalCacheConfig {
     private static final int DURATION = 24;
 
     @Bean
-    public Cache<Long, Map<Long, EdgeInfo>> edgeLocalCache() {
+    public Cache<Long, Map<String, EdgeInfo>> edgeLocalCache() {
         return Caffeine.newBuilder()
                 .maximumSize(MAXIMUM_SIZE)
                 .expireAfterWrite(DURATION, TimeUnit.HOURS)

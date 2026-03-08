@@ -13,7 +13,6 @@ import com.aviation.routing.flight.path.engine.domain.model.projection.RouteCand
 import com.aviation.routing.flight.path.engine.domain.model.route.finder.EdgeInfo;
 import com.aviation.routing.flight.path.engine.domain.port.NeighborProviderPort;
 import com.aviation.routing.flight.path.engine.domain.port.RouteFinderPort;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -49,9 +48,10 @@ public class RouteFinderService implements RouteFinderPort {
             return;
         }
 
-        Map<Long, EdgeInfo> neighbors = neighborProviderPort.getNeighbors(currentNode, requestedDayMask);
-        for (Map.Entry<Long, EdgeInfo> entry : neighbors.entrySet()) {
-            Long nextNodeId = entry.getKey();
+        Map<String, EdgeInfo> neighbors = neighborProviderPort.getNeighbors(currentNode, requestedDayMask);
+        for (Map.Entry<String, EdgeInfo> entry : neighbors.entrySet()) {
+            String compositeNodeKey = entry.getKey();
+            Long nextNodeId = getNodeId(compositeNodeKey);
 
             if (!isVisitedBefore(visitedNodes, nextNodeId)) {
                 PathEdge edge = createPathEdge(currentNode, entry);
@@ -79,18 +79,16 @@ public class RouteFinderService implements RouteFinderPort {
         visitedNodes.remove(nextNodeId);
     }
 
-    private static PathEdge createPathEdge(Long originId, Map.Entry<Long, EdgeInfo> entry) {
+    private static PathEdge createPathEdge(Long originId, Map.Entry<String, EdgeInfo> entry) {
         return PathEdge.builder()
             .originId(originId)
-            .destinationId(entry.getKey())
+            .destinationId(getNodeId(entry.getKey()))
             .transportationType(entry.getValue().type())
             .build();
     }
 
-    @Builder
-    private record PathContext(
-        Long currentNode,
-        List<PathEdge> edges,
-        Set<Long> visitedNodes
-    ) { }
+    private static Long getNodeId(String compositeKey) {
+        String[] split = compositeKey.split(":");
+        return Long.parseLong(split[0]);
+    }
 }

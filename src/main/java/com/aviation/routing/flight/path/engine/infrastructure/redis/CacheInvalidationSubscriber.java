@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class CacheInvalidationSubscriber {
 
     private final RedissonClient redissonClient;
-    private final Cache<Long, Map<Long, EdgeInfo>> localCache;
+    private final Cache<Long, Map<String, EdgeInfo>> localCache;
 
     @PostConstruct
     public void subscribe() {

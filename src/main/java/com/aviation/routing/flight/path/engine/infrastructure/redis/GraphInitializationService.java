@@ -71,7 +71,8 @@ public class GraphInitializationService {
                 String redisKey = "node:edges:" + edge.getOriginLocationId();
                 String value = edge.getTransportationType() + ":" + edge.getOperatingDays();
 
-                batch.getMap(redisKey).putAsync(edge.getDestinationLocationId(), value);
+                String neighborKey = edge.getDestinationLocationId() + ":" + edge.getTransportationType();
+                batch.getMap(redisKey).putAsync(neighborKey, value);
             }
 
             batch.execute();

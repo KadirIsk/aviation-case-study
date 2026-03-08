@@ -23,13 +23,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CachingNeighborProviderPort implements NeighborProviderPort {
-    private final Cache<Long, Map<Long, EdgeInfo>> localCache;
+    private final Cache<Long, Map<String, EdgeInfo>> localCache;
     private final RedissonClient redissonClient;
     private final TransportationService transportationService;
 
     @Override
-    public Map<Long, EdgeInfo> getNeighbors(Long nodeId, short requestedDayMask) {
-        Map<Long, EdgeInfo> allNeighbors = localCache.get(nodeId, this::fetchFromRedis);
+    public Map<String, EdgeInfo> getNeighbors(Long nodeId, short requestedDayMask) {
+        Map<String, EdgeInfo> allNeighbors = localCache.get(nodeId, this::fetchFromRedis);
 
         if (MapUtils.isEmpty(allNeighbors)) {
             return Collections.emptyMap();
@@ -42,8 +42,8 @@ public class CachingNeighborProviderPort implements NeighborProviderPort {
 
     @CircuitBreaker(name = "redisNeighborCache", fallbackMethod = "fetchFromDbFallback")
     @TimeLimiter(name = "redisNeighborCache")
-    public Map<Long, EdgeInfo> fetchFromRedis(Long nodeId) {
-        RMap<Long, String> redisEdges = redissonClient.getMap("node:edges:" + nodeId);
+    public Map<String, EdgeInfo> fetchFromRedis(Long nodeId) {
+        RMap<String, String> redisEdges = redissonClient.getMap("node:edges:" + nodeId);
         return convertToEdgeInfoMap(redisEdges);
     }
 
@@ -62,7 +62,7 @@ public class CachingNeighborProviderPort implements NeighborProviderPort {
             ));
     }
 
-    private Map<Long, EdgeInfo> convertToEdgeInfoMap(Map<Long, String> redisData) {
+    private Map<String, EdgeInfo> convertToEdgeInfoMap(Map<String, String> redisData) {
         if (MapUtils.isEmpty(redisData)) {
             return Collections.emptyMap();
         }
