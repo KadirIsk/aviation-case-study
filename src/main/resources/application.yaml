@@ -6,7 +6,7 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s
   application.name: flight-path-engine
-  profiles.active: local
+  profiles.active: test
 
   jpa:
     open-in-view: false
