@@ -39,37 +39,58 @@ public class LocationController {
     private final LocationService locationService;
 
     @Operation(summary = "Create a new location", description = "Creates a new location with the given details")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Location created successfully")
-    })
+    @ApiResponses(
+        value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Location created successfully"
+            )
+        }
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse<LocationResponse>> create(@Valid @RequestBody CreateLocationRequest request) {
         Location location = locationService.create(request.toUseCase());
 
-        ApiResponse<LocationResponse> apiResponse = ApiResponse.success(LocationResponse.from(location), "Location created successfully");
+        ApiResponse<LocationResponse> apiResponse = ApiResponse.success(
+            LocationResponse.from(location),
+            "Location created successfully"
+        );
 
         return ResponseEntity.ok(apiResponse);
     }
 
     @Operation(summary = "Get location by ID", description = "Returns a single location by its ID")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Location retrieved successfully"),
+    @ApiResponses(
+        value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Location retrieved successfully"
+            ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Location not found")
-    })
+        }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<LocationResponse>> getById(@PathVariable Long id) {
         Location location = locationService.get(id);
 
-        ApiResponse<LocationResponse> apiResponse = ApiResponse.success(LocationResponse.from(location), "Location retrieved successfully");
+        ApiResponse<LocationResponse> apiResponse = ApiResponse.success(
+            LocationResponse.from(location),
+            "Location retrieved successfully"
+        );
 
         return ResponseEntity.ok(apiResponse);
     }
 
     @Operation(summary = "Get filtered locations", description = "Returns a paginated list of locations based on filters")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Locations retrieved successfully")
-    })
+    @ApiResponses(
+        value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Locations retrieved successfully"
+            )
+        }
+    )
     @GetMapping
     public ResponseEntity<ApiResponse<PageData<LocationResponse>>> getAll(
         @ParameterObject LocationFilterRequest filterRequest,
@@ -83,24 +104,40 @@ public class LocationController {
     }
 
     @Operation(summary = "Update an existing location", description = "Updates the location with the given ID")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Location updated successfully"),
+    @ApiResponses(
+        value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Location updated successfully"
+            ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Location not found")
-    })
+        }
+    )
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<LocationResponse>> update(@PathVariable Long id, @Valid @RequestBody UpdateLocationRequest request) {
+    public ResponseEntity<ApiResponse<LocationResponse>> update(
+        @PathVariable Long id,
+        @Valid @RequestBody UpdateLocationRequest request
+    ) {
         Location location = locationService.update(request.toUseCase(id));
 
-        ApiResponse<LocationResponse> apiResponse = ApiResponse.success(LocationResponse.from(location), "Location updated successfully");
+        ApiResponse<LocationResponse> apiResponse = ApiResponse.success(
+            LocationResponse.from(location),
+            "Location updated successfully"
+        );
 
         return ResponseEntity.ok(apiResponse);
     }
 
     @Operation(summary = "Delete a location", description = "Deletes the location with the given ID")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "Location deleted successfully"),
+    @ApiResponses(
+        value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "204",
+                description = "Location deleted successfully"
+            ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Location not found")
-    })
+        }
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         locationService.delete(id);

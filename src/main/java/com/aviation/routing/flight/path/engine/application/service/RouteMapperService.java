@@ -12,6 +12,8 @@ import com.aviation.routing.flight.path.engine.application.port.out.LocationProv
 import com.aviation.routing.flight.path.engine.domain.model.projection.PathEdge;
 import com.aviation.routing.flight.path.engine.domain.model.projection.RouteCandidate;
 import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.RouteResponse;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.RouteResponse.RouteDto;
+import com.aviation.routing.flight.path.engine.infrastructure.rest.dto.RouteResponse.RouteStepDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -32,16 +34,16 @@ public class RouteMapperService implements RouteMapperPort {
         Map<Long, String> locationNames = locationProviderPort.getLocationNames(allNodeIds);
 
         return validRoutes.stream()
-                .map(candidate -> buildRouteResponse(candidate, locationNames))
-                .toList();
+            .map(candidate -> buildRouteResponse(candidate, locationNames))
+            .toList();
     }
 
     private Set<Long> extractUniqueNodeIds(List<RouteCandidate> routes) {
         return routes.stream()
-                .flatMap(route -> route.edges().stream())
-                .map(edge -> Set.of(edge.originId(), edge.destinationId()))
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
+            .flatMap(route -> route.edges().stream())
+            .map(edge -> Set.of(edge.originId(), edge.destinationId()))
+            .flatMap(Set::stream)
+            .collect(Collectors.toSet());
     }
 
     private RouteResponse buildRouteResponse(RouteCandidate candidate, Map<Long, String> locationNames) {
@@ -60,18 +62,18 @@ public class RouteMapperService implements RouteMapperPort {
                 titleSet = true;
             }
 
-            steps.add(RouteResponse.RouteStepDto.builder()
-                .origin(originName)
-                .destination(destName)
-                .transportationType(type)
-                .build());
+            steps.add(RouteStepDto.builder()
+                          .origin(originName)
+                          .destination(destName)
+                          .transportationType(type)
+                          .build());
         }
 
         return RouteResponse.builder()
-            .route(RouteResponse.RouteDto.builder()
-                .title(title)
-                .steps(steps)
-                .build())
+            .route(RouteDto.builder()
+                       .title(title)
+                       .steps(steps)
+                       .build())
             .build();
     }
 }

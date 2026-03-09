@@ -25,20 +25,29 @@ public class RouteController {
 
     private final FindFlightRoutesUseCase findFlightRoutesUseCase;
 
-    @Operation(summary = "Find routes", description = "Finds available flight routes between origin and destination on requested days")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Routes retrieved successfully")
-    })
+    @Operation(
+        summary = "Find routes",
+        description = "Finds available flight routes between origin and destination on requested days"
+    )
+    @ApiResponses(
+        value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Routes retrieved successfully"
+            )
+        }
+    )
     @GetMapping
     public ResponseEntity<ApiResponse<List<RouteResponse>>> findRoutes(
-            @ParameterObject RouteSearchRequest request) {
+        @ParameterObject RouteSearchRequest request
+    ) {
 
         List<RouteResponse> routes = findFlightRoutesUseCase.execute(
             request.originId(),
             request.destinationId(),
             DayOfWeekBitmaskMapper.toBitmask(request.operatingDays())
         );
-        
+
         return ResponseEntity.ok(ApiResponse.success(routes, "Routes retrieved successfully"));
     }
 }
