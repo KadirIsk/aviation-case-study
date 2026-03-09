@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:postgresql://db:5432/aviation_db
+    username: user
+    password: password
+  data:
+    redis:
+      host: cache
+      port: 6379
