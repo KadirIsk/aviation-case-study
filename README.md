@@ -4,7 +4,7 @@ Bu proje, lokasyonlar ve ulaşım yolları (transportation) arasında en uygun u
 
 ## Ön Koşullar (Prerequisites)
 
-Uygulamayı yerel ortamınızda çalıştırmadan önce aşağıdaki bileşenlerin yüklü ve yapılandırılmış olduğundan emin olun:
+Uygulamayı local ortamınızda çalıştırmadan önce aşağıdaki bileşenler yüklü ve yapılandırılmış olmalı:
 
 - **Java 21**: JDK 21 sürümü yüklü olmalıdır. `JAVA_HOME` ortam değişkeninin bu sürümü göstermesi önerilir.
 - **Maven 3.8+**: Projenin derlenmesi ve paketlenmesi için gereklidir.
@@ -32,7 +32,7 @@ docker compose version
 
 ## Kurulum ve Çalıştırma
 
-### 1. Docker Compose ile Hızlı Başlangıç (Önerilen)
+### 1. Docker Compose ile Hızlı Başlangıç
 
 Tüm bağımlılıkları (PostgreSQL, Redis) ve uygulamayı tek bir komutla ayağa kaldırabilirsiniz:
 
