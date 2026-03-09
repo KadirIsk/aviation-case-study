@@ -91,14 +91,6 @@ class LocationServiceImplTest {
     @Test
     void update_updatesFields_andSaves() {
         Long id = 5L;
-        Location existing = Location.builder()
-            .id(id)
-            .name("OldName")
-            .country("OldCountry")
-            .city("OldCity")
-            .locationCode("CODE")
-            .build();
-
         UpdateLocationUseCase request = UpdateLocationUseCase.builder()
             .id(id)
             .name("NewName")
@@ -106,20 +98,17 @@ class LocationServiceImplTest {
             .city("NewCity")
             .build();
 
-        when(locationPersistencePort.findById(id)).thenReturn(Optional.of(existing));
-        when(locationPersistencePort.save(any(Location.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(locationPersistencePort.update(any(Location.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Location result = service.update(request);
 
-        verify(locationPersistencePort).findById(id);
         ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
-        verify(locationPersistencePort).save(captor.capture());
+        verify(locationPersistencePort).update(captor.capture());
 
         Location saved = captor.getValue();
         assertEquals("NewName", saved.getName());
         assertEquals("NewCountry", saved.getCountry());
         assertEquals("NewCity", saved.getCity());
-        assertEquals("CODE", saved.getLocationCode());
 
         assertEquals("NewName", result.getName());
     }

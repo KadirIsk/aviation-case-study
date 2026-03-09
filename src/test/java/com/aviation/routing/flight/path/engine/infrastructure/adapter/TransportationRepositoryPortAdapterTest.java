@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.aviation.routing.flight.path.engine.application.dto.TransportationFilterRequest;
+import com.aviation.routing.flight.path.engine.domain.model.EventType;
+import com.aviation.routing.flight.path.engine.domain.model.GraphSyncEvent;
 import com.aviation.routing.flight.path.engine.domain.model.Transportation;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.entity.TransportationEntity;
 import com.aviation.routing.flight.path.engine.infrastructure.persistence.repository.JpaTransportationRepository;
@@ -21,9 +22,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.redisson.api.RMap;
-import org.redisson.api.RTopic;
-import org.redisson.api.RedissonClient;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -37,13 +36,7 @@ class TransportationRepositoryPortAdapterTest {
     private JpaTransportationRepository jpaTransportationRepository;
 
     @Mock
-    private RedissonClient redissonClient;
-
-    @Mock
-    private RMap<Long, String> transportationMap;
-
-    @Mock
-    private RTopic invalidationTopic;
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private TransportationPersistenceAdapter adapter;
@@ -69,8 +62,6 @@ class TransportationRepositoryPortAdapterTest {
                     .operatingDays(e.getOperatingDays())
                     .build();
             });
-        doReturn(transportationMap).when(redissonClient).getMap("node:edges:1");
-        doReturn(invalidationTopic).when(redissonClient).getTopic("graph-invalidation-topic");
 
         Transportation saved = adapter.save(input);
 
@@ -91,10 +82,13 @@ class TransportationRepositoryPortAdapterTest {
         assertEquals("FLIGHT", saved.getTransportationType());
         assertEquals((short)1, saved.getOperatingDays());
 
-        verify(redissonClient).getMap("node:edges:1");
-        verify(transportationMap).put(2L, "FLIGHT:1");
-        verify(redissonClient).getTopic("graph-invalidation-topic");
-        verify(invalidationTopic).publish(1L);
+        ArgumentCaptor<GraphSyncEvent> eventCaptor = ArgumentCaptor.forClass(GraphSyncEvent.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        GraphSyncEvent event = eventCaptor.getValue();
+        assertEquals(1L, event.originId());
+        assertEquals("2:FLIGHT", event.destinationCompositeId());
+        assertEquals("FLIGHT:1", event.value());
+        assertEquals(EventType.SAVE, event.eventType());
     }
 
     @Test
@@ -108,17 +102,45 @@ class TransportationRepositoryPortAdapterTest {
             .build();
 
         when(jpaTransportationRepository.findById(15L)).thenReturn(Optional.of(entity));
-        doReturn(transportationMap).when(redissonClient).getMap("node:edges:10");
-        doReturn(invalidationTopic).when(redissonClient).getTopic("graph-invalidation-topic");
 
         adapter.delete(15L);
 
         verify(jpaTransportationRepository).findById(15L);
-        verify(jpaTransportationRepository).deleteById(15L);
-        verify(redissonClient).getMap("node:edges:10");
-        verify(transportationMap).remove(20L);
-        verify(redissonClient).getTopic("graph-invalidation-topic");
-        verify(invalidationTopic).publish(10L);
+        verify(jpaTransportationRepository).delete(entity);
+        
+        ArgumentCaptor<GraphSyncEvent> eventCaptor = ArgumentCaptor.forClass(GraphSyncEvent.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        GraphSyncEvent event = eventCaptor.getValue();
+        assertEquals(10L, event.originId());
+        assertEquals("20:FLIGHT", event.destinationCompositeId());
+        assertEquals(EventType.DELETE, event.eventType());
+    }
+
+    @Test
+    void update_updatesOperatingDays_andSaves() {
+        Transportation input = Transportation.builder()
+            .id(100L)
+            .operatingDays((short) 5)
+            .build();
+
+        TransportationEntity existing = TransportationEntity.builder()
+            .id(100L)
+            .originLocationEntityId(1L)
+            .destinationLocationEntityId(2L)
+            .transportationType("FLIGHT")
+            .operatingDays((short) 1)
+            .build();
+
+        when(jpaTransportationRepository.findById(100L)).thenReturn(Optional.of(existing));
+        when(jpaTransportationRepository.save(any(TransportationEntity.class))).thenAnswer(i -> i.getArgument(0));
+
+        Transportation result = adapter.update(input);
+
+        assertEquals((short) 5, existing.getOperatingDays());
+        verify(jpaTransportationRepository).save(existing);
+        assertNotNull(result);
+        
+        verify(eventPublisher).publishEvent(any(GraphSyncEvent.class));
     }
 
     @Test
