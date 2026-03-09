@@ -13,8 +13,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -68,7 +71,10 @@ public class LocationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Locations retrieved successfully")
     })
     @GetMapping
-    public ResponseEntity<ApiResponse<PageData<LocationResponse>>> getAll(LocationFilterRequest filterRequest, Pageable pageable) {
+    public ResponseEntity<ApiResponse<PageData<LocationResponse>>> getAll(
+        @ParameterObject LocationFilterRequest filterRequest,
+        @ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
         Page<Location> locationPage = locationService.get(filterRequest, pageable);
 
         PageData<LocationResponse> pageData = PageData.from(locationPage.map(LocationResponse::from));
