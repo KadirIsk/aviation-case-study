@@ -99,6 +99,7 @@ public class TransportationPersistenceAdapter implements TransportationPersisten
             .eventType(EventType.DELETE)
             .build();
 
+        jpaRepository.delete(entity);
         eventPublisher.publishEvent(syncEvent);
     }
 
